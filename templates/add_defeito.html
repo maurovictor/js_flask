@@ -3,8 +3,6 @@
     <head>
         <meta charset="utf-8">
         <title>Adicionar Defeitos</title>
-
-
         <!-- Bootstrap links and scripts -->
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
@@ -18,8 +16,8 @@
         </script>
 
         <!-- SUMMERNOTE REQUIREMENTS-->
-        <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.css" rel="stylesheet">
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.4/summernote.js"></script>
+        <link href="{{url_for('static', filename='css/summernote.css')}}" rel="stylesheet">
+        <script src="{{url_for('static', filename='js/summernote.js')}}"></script>
 
     </head>
     <body>
@@ -67,7 +65,11 @@
     </body>
     <script type="text/javascript">
         $(document).ready(function() {
-          $('.summernote').summernote();
+          $('.summernote').summernote({
+              toolbar: [
+                ['para', ['ul', 'ol']],
+              ]
+          });
         });
     </script>
 
