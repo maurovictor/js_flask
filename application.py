@@ -1,24 +1,22 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
+import sqlite3
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
-db = SQLAlchemy(app)
-
-
-
-class Placa(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome_placa = db.Column(db.String(100), unique=True)
-
-    def __init__(self, placa):
-        self.nome_placa = placa
-
-    def __repr__(self):
-        return 'Placa '
-
-db.create_all()
-
+conn = sqlite3.connect('db/banco_de_dados')
+c = conn.cursor()
 @app.route('/')
 def pagina_teste():
     return render_template('principal.html')
+
+@app.route('/add_defeito')
+def adicionar_defeito():
+    #if request.method == 'GET':
+    return render_template('add_defeito.html')
+    #else:
+        ##c.execute("INSERT INTO Defeitos VALUES(%s, %s, %s, %s) ") % (nome_defeito, descricao,conserto, placa)
+        ##conn.commit()
+
+@app.route('/add_placa')
+def adicionar_placa():
+    return render_template('add_placa.html')
