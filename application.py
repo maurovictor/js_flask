@@ -6,33 +6,57 @@ import sqlite3
 UPLOAD_FOLDER = 'static/pictures/raw/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
-
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
-
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/no_db')
+def no_db():
+    return render_template('no_data_base.html')
+
 @app.route('/')
-def pagina_teste():
+def pagina_incial():
     return render_template('principal.html')
 
 @app.route('/add_defeito', methods=['GET', 'POST'])
 def add_defeito():
-    #if request.method == 'GET':
-    if request.method == 'GET':
-        return render_template('add_defeito.html')
-    else:
+    try:
         conn = sqlite3.connect('db/banco_de_dados')
         c = conn.cursor()
+    except Exception as e:
+        return redirect("no_db", error = e)
+
+    if request.method == 'GET':
+        command_1 = "SELECT nome_placa FROM Placas"
+        c.execute(command_1)
+        placas_raw = c.fetchall()
+        placas = [placas_raw[x][0] for x in range(len(placas_raw))]
+
+        command_2 = "SELECT fabricante FROM Placas"
+        c.execute(command_2)
+        fabricantes_raw = c.fetchall()
+        fabricantes = [fabricantes_raw[x][0] for x in range(len(fabricantes_raw))]
+
+        dados_placas = list(zip(placas, fabricantes)) ## zip placas' list with fabricantes' list and turn it into a list
+
+        return render_template('add_defeito.html', dados_placas = dados_placas)
+    else:
+
+
         defeito = request.form['nome_defeito']
         descricao = request.form['descricao']
         conserto = request.form['conserto']
-        placa = "123"
-        command = "INSERT INTO Defeitos (nome_defeito, descricao, conserto, placa) VALUES('{0}', '{1}', '{2}', '{3}')".format(defeito, descricao, conserto, placa)
+        nome_placa = request.form['placa']
+        ## Take the id from selected board
+        c.execute("SELECT placa_id FROM Placas WHERE nome_placa=?", (nome_placa,))
+        placa_id = c.fetchone()[0]
+        print(placa_id)
+        ## Add flaw to database
+        command = "INSERT INTO Defeitos (nome_defeito, descricao, conserto, placa) VALUES('{0}', '{1}', '{2}', '{3}')".format(defeito, descricao, conserto, placa_id)
         c.execute(command)
         conn.commit()
         conn.close()

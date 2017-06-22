@@ -42,20 +42,16 @@
                     <p class="help-block">Componentes a substituir, trilhas a reparar, passo a passo</p>
                   </div>
                   <div class="form-group">
-                      <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                          Placa
-                          <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                          <li role="separator" class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                        </ul>
-                      </div>
+                      <select class="form-control" name="placa">
+                          {% for placa in dados_placas %}
+                              <option value="{{placa[0]}}">
+                                  {{placa[0]}} | {{placa[1]}}
+                              </option>
+                          {% endfor %}
+                      </select>
+
                   </div>
+
                   <div class="col-md-2 col-md-offset-4">
                       <button type="submit" class="btn btn-primary t">Submit</button>
                   </div>
