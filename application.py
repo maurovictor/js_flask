@@ -1,10 +1,12 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, Request, flash
+from flask import Flask, render_template, request, redirect, url_for, Request, flash, session
 from werkzeug.utils import secure_filename
+from PIL import Image
+from resizeimage import resizeimage
 import sqlite3
 
 UPLOAD_FOLDER = 'static/pictures/raw/'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -31,21 +33,20 @@ def add_defeito():
         return redirect("no_db", error = e)
 
     if request.method == 'GET':
-        command_1 = "SELECT nome_placa FROM Placas"
+        command_1 = "SELECT nome_placa FROM Placas ORDER BY placa_id"
         c.execute(command_1)
         placas_raw = c.fetchall()
         placas = [placas_raw[x][0] for x in range(len(placas_raw))]
 
-        command_2 = "SELECT fabricante FROM Placas"
+        command_2 = "SELECT fabricante FROM Placas ORDER BY placa_id"
         c.execute(command_2)
         fabricantes_raw = c.fetchall()
         fabricantes = [fabricantes_raw[x][0] for x in range(len(fabricantes_raw))]
 
         dados_placas = list(zip(placas, fabricantes)) ## zip placas' list with fabricantes' list and turn it into a list
-
+        print(dados_placas)
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
-
 
         defeito = request.form['nome_defeito']
         descricao = request.form['descricao']
@@ -54,13 +55,14 @@ def add_defeito():
         ## Take the id from selected board
         c.execute("SELECT placa_id FROM Placas WHERE nome_placa=?", (nome_placa,))
         placa_id = c.fetchone()[0]
-        print(nome_placa)
+
         ## Add flaw to database
         command = "INSERT INTO Defeitos (nome_defeito, descricao, conserto, placa) VALUES('{0}', '{1}', '{2}', '{3}')".format(defeito, descricao, conserto, placa_id)
         c.execute(command)
         conn.commit()
         conn.close()
-        return render_template("desenho_aux.html", nome_placa = nome_placa)
+        session['nome_placa'] = nome_placa
+        return redirect("add_desenho")
 
 @app.route('/add_placa', methods=['GET', 'POST'])
 def adicionar_placa():
@@ -100,15 +102,21 @@ def adicionar_placa():
             filename = "{0}.png".format(placa)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            conn = sqlite3.connect('db/banco_de_dados')
-            c = conn.cursor()
-            command = "INSERT INTO Placas (nome_placa, fabricante, tipo, conector) VALUES('{0}', '{1}', '{2}', '{3}')".format(placa, fabricante, tipo, conector)
-            c.execute(command)
-            conn.commit()
-            conn.close()
-            flash('Placa {0} Registrada'.format(placa))
+            with open('static/pictures/raw/{0}'.format(filename), 'r+b') as f:
+                with Image.open(f) as image:
+                    cover = resizeimage.resize_contain(image, [1100, 520])
+                    cover.save('static/pictures/raw/{0}'.format(filename), image.format)
 
-            return redirect("add_placa")
-@app.route('/desenho_auxiliar')
+        print(fabricante)
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        command = "INSERT INTO Placas (nome_placa, fabricante, tipo, conector) VALUES('{0}', '{1}', '{2}', '{3}')".format(placa, fabricante, tipo, conector)
+        c.execute(command)
+        conn.commit()
+        conn.close()
+        flash('Placa {0} Registrada'.format(placa))
+        return redirect("add_placa")
+
+@app.route('/add_desenho')
 def desenho():
     return render_template("desenho_aux.html")
