@@ -54,13 +54,13 @@ def add_defeito():
         ## Take the id from selected board
         c.execute("SELECT placa_id FROM Placas WHERE nome_placa=?", (nome_placa,))
         placa_id = c.fetchone()[0]
-        print(placa_id)
+        print(nome_placa)
         ## Add flaw to database
         command = "INSERT INTO Defeitos (nome_defeito, descricao, conserto, placa) VALUES('{0}', '{1}', '{2}', '{3}')".format(defeito, descricao, conserto, placa_id)
         c.execute(command)
         conn.commit()
         conn.close()
-        return redirect("add_defeito")
+        return render_template("desenho_aux.html", nome_placa = nome_placa)
 
 @app.route('/add_placa', methods=['GET', 'POST'])
 def adicionar_placa():
@@ -109,3 +109,6 @@ def adicionar_placa():
             flash('Placa {0} Registrada'.format(placa))
 
             return redirect("add_placa")
+@app.route('/desenho_auxiliar')
+def desenho():
+    return render_template("desenho_aux.html")
