@@ -4,6 +4,9 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from resizeimage import resizeimage
 import sqlite3
+import base64
+from io import BytesIO
+
 
 UPLOAD_FOLDER = 'static/pictures/raw/'
 ALLOWED_EXTENSIONS = set(['png'])
@@ -44,7 +47,7 @@ def add_defeito():
         fabricantes = [fabricantes_raw[x][0] for x in range(len(fabricantes_raw))]
 
         dados_placas = list(zip(placas, fabricantes)) ## zip placas' list with fabricantes' list and turn it into a list
-        print(dados_placas)
+        ##print(dados_placas)
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
 
@@ -117,6 +120,21 @@ def adicionar_placa():
         flash('Placa {0} Registrada'.format(placa))
         return redirect("add_placa")
 
-@app.route('/add_desenho')
+@app.route('/add_desenho', methods=['GET','POST'])
 def desenho():
-    return render_template("desenho_aux.html")
+    if request.method == 'GET':
+        try:
+            nome_placa = session['nome_placa']
+            session.pop('nome_placa', None)
+            return render_template("desenho_aux.html", nome_placa=nome_placa)
+        except Exception as e:
+            return render_template("denied_access.html")
+    if request.method == 'POST':
+        try:
+            image_b64 = request.values['imageBase64']
+            im = Image.open(BytesIO(base64.b64decode(image_b64)))
+            im.save(os.path.join(app.config['UPLOAD_FOLDER'], "{0}.png".format(nome_placa)))
+        except Exception as e:
+            print(e)
+
+        return 'nothing'

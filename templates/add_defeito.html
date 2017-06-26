@@ -71,12 +71,4 @@
         });
     </script>
     <!-- drawingboard code -->
-    <script type="text/javascript">
-        //create the drawingboard by passing it the #id of the wanted container
-        var defaultBoard = new DrawingBoard.Board('default-board',{
-            background: "{{url_for('static', filename='pictures/raw/{0}').format()}}"
-        });
-        defaultBoard.addControl('Download');
-    </script>
-
 </html>

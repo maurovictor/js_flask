@@ -15,8 +15,11 @@
         <div class="container">
             <div class="page-header">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <h1>JS Placas <small>Testador</small></h1>
+                    </div>
+                    <div class="col-md-4">
+                        <h1><button type="button" class="btn btn-primary" id="enviar_desenho">Enviar Imagem</button></h1>
                     </div>
                     <div class="col-md-4">
                         <h1><small>Desenho Auxiliar</small></h1>
@@ -51,11 +54,36 @@
         <script type="text/javascript">
             //create the drawingboard by passing it the #id of the wanted container
             var defaultBoard = new DrawingBoard.Board('default-board',{
-                background: "{{url_for('static', filename = 'pictures/raw/{0}.png'.format(session['nome_placa']))}}"
+                background: "{{url_for('static', filename = 'pictures/raw/{0}.png'.format(nome_placa))}}",
+                webStorage: 'false'
             });
             defaultBoard.addControl('Download');
-        </script>
-        {% block delete_session %} session.pop('nome_placa', None){% endblock %}
-    </body>
 
+        </script>
+
+        <!-- Enviar o desenho para o servidor -->
+
+        <script type="text/javascript">
+            $('#enviar_desenho').click( function() {
+
+                $('.drawing-board-canvas').attr("name", "desenho_editado")
+                var canvas = document.getElementsByClassName("drawing-board-canvas")[0];
+
+                var dataURL = canvas.toDataURL();
+
+                $.ajax({
+                  type: "POST",
+                  url: "{{url_for('desenho')}}",
+                  data: {
+                     imageBase64: dataURL
+                    }
+
+                }).done(function(o) {
+                  console.log('saved');
+                  alert("Deu certo");
+                });
+            });
+
+        </script>
+    </body>
 </html>
