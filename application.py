@@ -5,7 +5,7 @@ from PIL import Image
 from resizeimage import resizeimage
 import sqlite3
 import base64
-from io import BytesIO
+from io import BytesIO, StringIO
 
 
 UPLOAD_FOLDER = 'static/pictures/raw/'
@@ -103,7 +103,7 @@ def adicionar_placa():
             return redirect("add_placa")
         if file and allowed_file(file.filename):
             filename = "{0}.png".format(placa)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER']+"raw/", filename))
 
             with open('static/pictures/raw/{0}'.format(filename), 'r+b') as f:
                 with Image.open(f) as image:
@@ -132,8 +132,23 @@ def desenho():
     if request.method == 'POST':
         try:
             image_b64 = request.values['imageBase64']
-            im = Image.open(BytesIO(base64.b64decode(image_b64)))
-            im.save(os.path.join(app.config['UPLOAD_FOLDER'], "{0}.png".format(nome_placa)))
+            data_len = len(str(image_b64))
+            print(data_len % 4)
+
+            if data_len % 4 == 0:
+                print(image_b64)
+                imagem = BytesIO(base64.b64decode(image_b64))
+                img = Image.open(imagem, 'r')
+
+            elif (data_len % 4) != 0:
+                image_b64 = image_b64 + '='*((4 - data_len % 4) % 4)
+                print(image_b64)
+                imagem = BytesIO(base64.b64decode(image_b64))
+                img = Image.open(imagem, 'r')
+
+
+            #imagem.save(os.path.join(app.config['UPLOAD_FOLDER']+"editions/", "{0}.png".format(nome_placa)))
+            return redirect("add_defeito")
         except Exception as e:
             print(e)
 
