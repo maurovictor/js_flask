@@ -5,10 +5,10 @@ from PIL import Image
 from resizeimage import resizeimage
 import sqlite3
 import base64
-from io import BytesIO, StringIO
+import io
 
 
-UPLOAD_FOLDER = 'static/pictures/raw/'
+UPLOAD_FOLDER = 'static/pictures/'
 ALLOWED_EXTENSIONS = set(['png'])
 
 app = Flask(__name__)
@@ -65,6 +65,7 @@ def add_defeito():
         conn.commit()
         conn.close()
         session['nome_placa'] = nome_placa
+        session['nome_defeito'] = defeito
         return redirect("add_desenho")
 
 @app.route('/add_placa', methods=['GET', 'POST'])
@@ -125,31 +126,23 @@ def desenho():
     if request.method == 'GET':
         try:
             nome_placa = session['nome_placa']
-            session.pop('nome_placa', None)
             return render_template("desenho_aux.html", nome_placa=nome_placa)
         except Exception as e:
             return render_template("denied_access.html")
     if request.method == 'POST':
         try:
-            image_b64 = request.values['imageBase64']
-            data_len = len(str(image_b64))
-            print(data_len % 4)
+            #print(session['nome_placa'])
+            #session.pop('nome_placa', None)
+            image_b64 = request.values['imageBase64'].strip()
+            image_b64 = image_b64[22:]
 
-            if data_len % 4 == 0:
-                print(image_b64)
-                imagem = BytesIO(base64.b64decode(image_b64))
-                img = Image.open(imagem, 'r')
+            decoded = base64.b64decode(image_b64)
 
-            elif (data_len % 4) != 0:
-                image_b64 = image_b64 + '='*((4 - data_len % 4) % 4)
-                print(image_b64)
-                imagem = BytesIO(base64.b64decode(image_b64))
-                img = Image.open(imagem, 'r')
+            img_bytes = io.BytesIO(decoded)
+            img = Image.open(img_bytes, mode='r')
+            img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'], session['nome_defeito'],session['nome_placa']))
 
-
-            #imagem.save(os.path.join(app.config['UPLOAD_FOLDER']+"editions/", "{0}.png".format(nome_placa)))
-            return redirect("add_defeito")
         except Exception as e:
-            print(e)
+                print(e)
 
         return 'nothing'
