@@ -141,8 +141,8 @@ def desenho():
             img_bytes = io.BytesIO(decoded)
             img = Image.open(img_bytes, mode='r')
             img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'], session['nome_defeito'],session['nome_placa']))
-
+            flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'], session['nome_placa']))
         except Exception as e:
                 print(e)
 
-        return 'nothing'
+        return ''

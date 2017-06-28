@@ -6,20 +6,22 @@
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
 
-
         <!-- drawingboard.js -->
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/drawingboard.min.css')}}">
 
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
             <div class="page-header">
                 <div class="row">
                     <div class="col-md-4">
                         <h1>JS Placas <small>Testador</small></h1>
                     </div>
-                    <div class="col-md-4">
-                        <h1><button type="button" class="btn btn-primary" id="enviar_desenho">Enviar Imagem</button></h1>
+                    <div class="col-md-2">
+                        <h1><button type="button" class="btn btn-primary" id="enviar_desenho"> Enviar Imagem</button></h1>
+                    </div>
+                    <div class="col-md-2">
+                        <h1><a href="{{url_for('add_defeito')}}"><button type="button" class="btn btn-primary" id="avancar">Avançar</button></h1></a>
                     </div>
                     <div class="col-md-4">
                         <h1><small>Desenho Auxiliar</small></h1>
@@ -27,12 +29,14 @@
                 </div>
 
             </div>
-
-            <div class="col-md-4">
-                <div class="example" data-example="1">
-                    <div class="board" id="default-board"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="example" data-example="1">
+                        <div class="board" id="default-board"></div>
+                    </div>
                 </div>
             </div>
+
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
@@ -46,8 +50,7 @@
         </script>
         <style>
         	#default-board {
-        		width: 1100px;
-        		height: 520px;
+        	    height: 520px;
         	}
         </style>
         <!-- drawingboard code -->
