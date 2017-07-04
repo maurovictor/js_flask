@@ -6,6 +6,7 @@ from resizeimage import resizeimage
 import sqlite3
 import base64
 import io
+import pymysql
 
 
 UPLOAD_FOLDER = 'static/pictures/'
@@ -13,7 +14,7 @@ ALLOWED_EXTENSIONS = set(['png'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+app.secret_key = os.urandom(24)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -146,3 +147,7 @@ def desenho():
                 print(e)
 
         return ''
+
+@app.route('/add_conector', methods=['GET', 'POST'])
+def concetor():
+    return render_template('conectores.html')
