@@ -28,7 +28,11 @@
                                 <span>&nbsp</span>
                         </div>
                         <div class="row">
-                                <div class="col-md-5 col-md-offset-3 ">
+
+                                <div class="col-md-3 ">
+                                        <span>{{session['valores']}}</span>
+                                </div>
+                                <div class="col-md-6  ">
                                         <canvas id="myCanvas" width="450" height="450"></canvas>
                                 </div>
                                 <div class="col-md-3">
@@ -71,6 +75,8 @@
                                 ctx.fillStyle = "#5A6A62";
                                 if ((col >=1 & col <= 8) & (bit >=1 & bit <= 8))
                                 ctx.fillRect((Math.round(mouseX/50)*50)-10,(Math.round(mouseY/50)*50)-10,20,20);
+                                coordenadas.push(col);
+                                coordenadas.push(bit);
                         });
 
                         var limpar = document.getElementById("clean");
@@ -91,21 +97,23 @@
                                         ctx.lineTo(450, i*50);
                                         ctx.stroke();
                                 }
+                                coordenadas = [];
 
                         });
-
-                        /*
-                        $.ajax({
-                          type: "POST",
-                          url: "{{url_for('conector')}}",
-                          data: {
-                             imageBase64: dataURL
-                            }
-                        }).done(function(o) {
-                          console.log('saved');
-                          alert("Imagem enviada para o servidor");
+                        var bot_enviar = document.getElementById("submit");
+                        bot_enviar.addEventListener('click', function(event){
+                                console.log(coordenadas);
+                                $.ajax({
+                                        type: "POST",
+                                        url: "{{url_for('conector')}}",
+                                        data: {c: JSON.stringify(coordenadas)}
+                                }).done(function(o) {
+                                        console.log('saved');
+                                        alert("Imagem enviada para o servidor");
+                                });
                         });
-                        */
+
+
 
 
 

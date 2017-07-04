@@ -7,6 +7,7 @@ import sqlite3
 import base64
 import io
 import pymysql
+import helpers
 
 
 UPLOAD_FOLDER = 'static/pictures/'
@@ -150,4 +151,13 @@ def desenho():
 
 @app.route('/add_conector', methods=['GET', 'POST'])
 def conector():
-    return render_template('conectores.html')
+    if request.method == 'GET':
+        return render_template('conectores.html')
+    else:
+        values=request.form['c']
+        coordinates = helpers.get_coordinates(values)
+        print(coordinates)
+        commands = helpers.generate_commands(coordinates)
+        
+
+        return ''
