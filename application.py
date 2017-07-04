@@ -149,5 +149,5 @@ def desenho():
         return ''
 
 @app.route('/add_conector', methods=['GET', 'POST'])
-def concetor():
+def conector():
     return render_template('conectores.html')
