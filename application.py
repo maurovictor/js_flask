@@ -1,3 +1,4 @@
+## Mauro Victor Castro
 import os
 from flask import Flask, render_template, request, redirect, url_for, Request, flash, session
 from werkzeug.utils import secure_filename
@@ -144,6 +145,7 @@ def desenho():
             img = Image.open(img_bytes, mode='r')
             img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'], session['nome_defeito'],session['nome_placa']))
             flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'], session['nome_placa']))
+
         except Exception as e:
                 print(e)
 
@@ -154,10 +156,11 @@ def conector():
     if request.method == 'GET':
         return render_template('conectores.html')
     else:
-        values=request.form['c']
+        values=request.form['c']            
         coordinates = helpers.get_coordinates(values)
         print(coordinates)
         commands = helpers.generate_commands(coordinates)
-        
+        print(commands)
+        helpers.generate_url(commands)
 
         return ''
