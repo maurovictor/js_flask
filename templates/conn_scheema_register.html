@@ -19,7 +19,13 @@
         <body>
                 <div class="container">
                         <div class="page-header">
-                            <h1>JS Placas <small>Testador</small></h1>
+                            <h1 class="text-center">JS Placas <small>Testador</small></h1>
+                            <ul class="nav nav-pills">
+                                <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
+                                <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
+                                <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
+                                <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                            </ul>
                         </div>
                         <div class="row">
                                 <span></span>
@@ -28,7 +34,6 @@
                                 <span>&nbsp</span>
                         </div>
                         <div class="row">
-
                                 <div class="col-md-3 ">
                                         <span>{{session['valores']}}</span>
                                 </div>
@@ -38,11 +43,9 @@
                                 <div class="col-md-3">
                                         <p><button type="button" class="btn btn-danger" id="clean">Limpar</button></p>
                                         <p><button type="button" class="btn btn-info" id="submit">Submeter</button></p>
-                                        <p><button type="button" class="btn btn-success">Avançar</button></p>
+                                        <p><a href="{{url_for('connector')}}"><button type="button" class="btn btn-success">Avançar</button></a></p>
                                 </div>
                         </div>
-
-
                 </div>
                 <script type="text/javascript">
                         var canvas = document.getElementById("myCanvas");
@@ -79,7 +82,6 @@
                                 coordenadas.push(col);
                                 coordenadas.push(bit);
                         });
-
                         var limpar = document.getElementById("clean");
                         limpar.addEventListener('click', function(event){
                                 ctx.fillStyle = "#d5dbdb";
@@ -99,26 +101,19 @@
                                         ctx.stroke();
                                 }
                                 coordenadas = [];
-
                         });
                         var bot_enviar = document.getElementById("submit");
                         bot_enviar.addEventListener('click', function(event){
                                 console.log(coordenadas);
                                 $.ajax({
                                         type: "POST",
-                                        url: "{{url_for('conector')}}",
+                                        url: "{{url_for('conn_scheema')}}",
                                         data: {c: JSON.stringify(coordenadas)}
                                 }).done(function(o) {
                                         console.log('saved');
-                                        alert("Imagem enviada para o servidor");
+                                        alert("Conector Salvo");
                                 });
                         });
-
-
-
-
-
-
                 </script>
         </body>
 </html>

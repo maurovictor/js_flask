@@ -8,6 +8,12 @@
 
         <!-- drawingboard.js -->
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/drawingboard.min.css')}}">
+        <style media="screen">
+                canvas {
+                  width: 100%;
+                  height: auto;
+                }
+        </style>
 
     </head>
     <body>
@@ -15,7 +21,13 @@
             <div class="page-header">
                 <div class="row">
                     <div class="col-md-4">
-                        <h1>JS Placas <small>Testador</small></h1>
+                        <h1 class="text-center">JS Placas <small>Testador</small></h1>
+                        <ul class="nav nav-pills">
+                            <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
+                            <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
+                            <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
+                            <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                        </ul>
                     </div>
                     <div class="col-md-2">
                         <h1><button type="button" class="btn btn-primary" id="enviar_desenho"> Enviar Imagem</button></h1>

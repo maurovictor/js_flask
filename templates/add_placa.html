@@ -5,19 +5,31 @@
         <title>Adicionar Placa</title>
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
-        <script type="text/javascript">
-            $('#myModal').on('shown.bs.modal', function () {
-                $('#myInput').focus()
-                if (!data) return e.preventDefault() // stops modal from being shown
-            })
-        </script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+        <!-- RESPONSIVE CANVAS --><!--
+        <style media="screen">
+                canvas {
+                        width: 95%;
+                        height: auto;
+                        padding-left: 0;
+                        padding-right: 0;
+                        margin-left: auto;
+                        margin-right: auto;
+                        display: block;
+                }
+        </style
+        -->
     </head>
     <body>
         <div class="container">
             <div class="page-header">
-                <h1>JS Placas <small>Testador</small></h1>
+                <h1 class="text-center">JS Placas <small>Testador</small></h1>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
+                    <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
+                    <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
+                    <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                </ul>
             </div>
             <div class="row">
 
@@ -26,20 +38,27 @@
                 <form action="{{url_for('adicionar_placa')}}" method="post" enctype="multipart/form-data">
                   <div class="form-group">
                     <label for="nome_placa">Nome da Placa</label>
-                    <input type="text" class="form-control" name="nome_placa" id="nome_placa" placeholder="Nome do Defeito">
+                    <input type="text" class="form-control" name="nome_placa" id="nome_placa" placeholder="Nome da Placa">
                   </div>
                   <div class="form-group">
                     <label for="fabricante">Fabricante</label>
-                    <input type="text" class="form-control" id="fabricante" name="fabricante" placeholder="Descrição do Defeito, Explicação">
+                    <input type="text" class="form-control" id="fabricante" name="fabricante" placeholder="exemplo:(Brastemp, Eletrolux, Colormaq)">
                   </div>
                   <div class="form-group">
                     <label for="tipo">Tipo</label>
-                    <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Instruções para consertar">
+                    <input type="text" class="form-control" id="tipo" name="tipo" placeholder="Interface ou Potência">
                   </div>
 
                   <div class="form-group">
                     <label for="tipo">Conector</label>
-                    <input type="text" class="form-control" id="conector" name="conector" placeholder="Tipo de Conector">
+
+                    <select type="text" class="form-control" id="conector" name="conector" placeholder="Tipo de Conector">
+                            {% for connector in connectors %}
+                                <option value="{{connector}}">{{connector}}</option>
+                            {% endfor %}
+                    </select>
+                    <button type="button" name="plus" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus"></span></button>
+                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Large modal</button> -->
                   </div>
 
                   <label class="custom-file">
@@ -66,18 +85,152 @@
                     {% endwith %}
                 </div>
             </div>
+
+            <div class="modal fade" id="myModal"tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                        <form class="" action="{{connector}}" method="post">
+                                <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title text-center">Adicionar Conector</h4>
+                                </div>
+                                <div class="modal-body">
+                                        <div class="row">
+                                                <div class="col-md-6 col-md-offset-3">
+                                                        <div class="form-group">
+                                                                <label class="text-center" for="nome-conector">Nome do Conector</label>
+                                                                <input type="text" class="form-control" name="connector-name" id="nome-conector">
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="row">
+
+                                                <div class="col-md-1">
+                                                        <span>{{session['valores']}}</span>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                        <canvas id="myCanvas" width="450" height="450"></canvas>
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" id="clean">Limpar</button>
+                                        <button type="button" class="btn btn-info" id="submit" data-dismiss="modal">Submeter</button>
+                                        <button type="button" class="btn btn-success">Avançar</button>
+                                </div>
+
+                        </form>
+
+
+                </div>
+              </div>
+            </div>
         </div>
 
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <!-- Flash messages code-->
         <script type="text/javascript">
             $(document).ready( function(){
                 {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    $('.alert').slideDown(300).delay(2000).slideUp(300);
-                  {% endif %}
-                {% endwith %}
-            });
+                        {% if messages %}
+                                $('.alert').slideDown(300).delay(2000).slideUp(300);
+                                {% endif %}
+                        {% endwith %}
+                });
+                $(function () {
+                        $('[data-toggle="tooltip"]').tooltip()
+                })
+        </script>
+        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
+        <script type="text/javascript">
+            $('#myModal').on('shown.bs.modal', function () {
+                $('#myInput').focus()
+                if (!data) return e.preventDefault() // stops modal from being shown
+            })
+        </script>
+        <!-- Contact Matrix code -->
+        <script type="text/javascript">
+                var canvas = document.getElementById("myCanvas");
+                var ctx = canvas.getContext("2d");
+                ctx.font="30px Arial";
+
+                ctx.fillStyle = "#d5dbdb";
+                ctx.fillRect(0,0,450,450);
+                ctx.strokeRect(0,0,450,450);
+                //draw vertical lines
+                for (i=1; i <= 8; i++)
+                {
+                        ctx.moveTo(i*50,0);
+                        ctx.lineTo(i*50, 450);
+                        ctx.stroke();
+                }
+                //draw horizontal lines
+                for (i=1; i<=8; i++)
+                {
+                        ctx.moveTo(0, i*50);
+                        ctx.lineTo(450, i*50);
+                        ctx.stroke();
+                }
+                var coordenadas = []
+                ctx.canvas.addEventListener('click', function(event){
+                        var rect = canvas.getBoundingClientRect();
+                        var mouseX = event.clientX - rect.left;
+                        var mouseY = event.clientY - rect.top;
+                        var col = Math.round(mouseX/50);
+                        var bit = Math.round(mouseY/50);
+                        ctx.fillStyle = "#5A6A62";
+                        if ((col >=1 & col <= 8) & (bit >=1 & bit <= 8))
+                        ctx.fillRect((Math.round(mouseX/50)*50)-10,(Math.round(mouseY/50)*50)-10,20,20);
+                        coordenadas.push(col);
+                        coordenadas.push(bit);
+                });
+                var limpar = document.getElementById("clean");
+                limpar.addEventListener('click', function(event){
+                        ctx.fillStyle = "#d5dbdb";
+                        ctx.fillRect(0,0,450,450);
+                        ctx.strokeRect(0,0,450,450);
+                        for (i=1; i <= 8; i++)
+                        {
+                                ctx.moveTo(i*50,0);
+                                ctx.lineTo(i*50, 450);
+                                ctx.stroke();
+                        }
+                        //draw horizontal lines
+                        for (i=1; i<=8; i++)
+                        {
+                                ctx.moveTo(0, i*50);
+                                ctx.lineTo(450, i*50);
+                                ctx.stroke();
+                        }
+                        coordenadas = [];
+                });
+                var bot_enviar = document.getElementById("submit");
+                bot_enviar.addEventListener('click', function(event){
+                        console.log(coordenadas);
+
+                        var name = document.getElementById("nome_placa").value;
+                        var fabric = document.getElementById("fabricante").value;
+                        var type = document.getElementById("tipo").value;
+                        var connector = document.getElementById("conector").value;
+
+                        $.ajax({
+                                type: "POST",
+                                url: "{{url_for('conn_scheema')}}",
+                                data:   {
+                                                c: JSON.stringify(coordenadas),
+                                                name: name,
+                                                fabric: fabric,
+                                                type: type,
+                                                connector: connector
+                                        }
+
+                        }).done(function(o) {
+                                console.log('saved');
+                                alert("Conector Salvo");
+                        });
+                });
         </script>
 
     </body>

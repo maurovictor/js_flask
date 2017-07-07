@@ -1,4 +1,5 @@
 ## Mauro Victor Castro
+
 import os
 from flask import Flask, render_template, request, redirect, url_for, Request, flash, session
 from werkzeug.utils import secure_filename
@@ -7,9 +8,8 @@ from resizeimage import resizeimage
 import sqlite3
 import base64
 import io
-import pymysql
 import helpers
-
+import database_helper
 
 UPLOAD_FOLDER = 'static/pictures/'
 ALLOWED_EXTENSIONS = set(['png'])
@@ -32,28 +32,15 @@ def pagina_incial():
 
 @app.route('/add_defeito', methods=['GET', 'POST'])
 def add_defeito():
-    try:
-        conn = sqlite3.connect('db/banco_de_dados')
-        c = conn.cursor()
-    except Exception as e:
-        return redirect("no_db", error = e)
 
     if request.method == 'GET':
-        command_1 = "SELECT nome_placa FROM Placas ORDER BY placa_id"
-        c.execute(command_1)
-        placas_raw = c.fetchall()
-        placas = [placas_raw[x][0] for x in range(len(placas_raw))]
 
-        command_2 = "SELECT fabricante FROM Placas ORDER BY placa_id"
-        c.execute(command_2)
-        fabricantes_raw = c.fetchall()
-        fabricantes = [fabricantes_raw[x][0] for x in range(len(fabricantes_raw))]
+        dados_placas = database_helper.load_boards() ## list of tuples of (board, fabric)
 
-        dados_placas = list(zip(placas, fabricantes)) ## zip placas' list with fabricantes' list and turn it into a list
-        ##print(dados_placas)
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
-
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
         defeito = request.form['nome_defeito']
         descricao = request.form['descricao']
         conserto = request.form['conserto']
@@ -74,7 +61,8 @@ def add_defeito():
 @app.route('/add_placa', methods=['GET', 'POST'])
 def adicionar_placa():
     if request.method == 'GET':
-        return render_template('add_placa.html')
+        connectors = database_helper.load_connectors()
+        return render_template('add_placa.html', connectors=connectors)
     if request.method == 'POST':
         placa = request.form['nome_placa']
         if placa == '':
@@ -143,24 +131,43 @@ def desenho():
 
             img_bytes = io.BytesIO(decoded)
             img = Image.open(img_bytes, mode='r')
-            img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'], session['nome_defeito'],session['nome_placa']))
-            flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'], session['nome_placa']))
+            img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'],\
+                                    session['nome_defeito'],session['nome_placa']))
+            flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'], \
+                                                                session['nome_placa']))
 
         except Exception as e:
-                print(e)
+            print('desenho')
+            print(e)
 
         return ''
 
-@app.route('/add_conector', methods=['GET', 'POST'])
-def conector():
+@app.route('/add_conn', methods=['GET', 'POST'])
+def connector():
     if request.method == 'GET':
-        return render_template('conectores.html')
+        return render_template('add_conn_form.html')
     else:
-        values=request.form['c']            
-        coordinates = helpers.get_coordinates(values)
-        print(coordinates)
-        commands = helpers.generate_commands(coordinates)
-        print(commands)
-        helpers.generate_url(commands)
+        session['connector_name'] = request.form['connector-name']
+        return redirect("add_conn_scheema")
 
+@app.route('/add_conn_scheema', methods=['GET', 'POST'])
+def conn_scheema():
+    if request.method == 'GET':
+        return render_template('conn_scheema_register.html')
+    else:
+        values=request.form['c']
+        board_name = request.form['name']
+        print("Board name is " + board_name)
+        coordinates = helpers.get_coordinates(values)
+        commands = helpers.generate_commands(coordinates)
+        ##helpers.generate_url(commands)
+        database_helper.save_connector(session['connector_name'], commands)
         return ''
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'GET':
+        dados_placas = database_helper.load_boards()
+        return render_template("test_board.html", dados_placas=dados_placas)
+    else:
+        placa = request.form['placa']

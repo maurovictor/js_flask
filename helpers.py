@@ -3,14 +3,16 @@
 import urllib.request
 import urllib.parse
 '''
-Module for helping functions, in order to organize the code in the main file
+    Module for helping functions, in order to organize the code in the main file
 '''
-def get_coordinates(MY_LIST):
+
+def get_coordinates(REQUEST_STRING):
+    if REQUEST_STRING == '[]': ## If the string data from request is empty return empty list
+        print('EMPTY REQUEST COMMANDS')
+        return []
     try:
-        if MY_LIST == []: ## If the string data from request is empty return empty list
-            return []
-        else:            ## In other case treat the data in order to get the pair of coordinates.
-            values = MY_LIST.replace('[','')
+            ## In other case treat the data in order to get the pair of coordinates.
+            values = REQUEST_STRING.replace('[','')
             values = values.replace(']','')
             values = values.split(',')
             x_values = [int(values[i]) for i in range(0,len(values),2)]
@@ -18,8 +20,10 @@ def get_coordinates(MY_LIST):
             return list(zip(x_values, y_values))
 
     except Exception as e:
-        ##print(e)
-        return ''
+        print('')
+        print('get_coordinates_error')
+        print(e)
+        return e
 
 def generate_commands(coordinates):
 
@@ -39,15 +43,15 @@ def generate_commands(coordinates):
                     byte = sum(byte)
                     commands.append(byte)
 
-
             return commands
 
     except Exception as e:
-        #print(e)
+        print('')
+        print('generate_commands_error')
+        print(e)
         return e
 
 def generate_url(commands):
-
     try:
         data = {}
         iterable_base = list(range(1,9))
@@ -61,5 +65,7 @@ def generate_url(commands):
         urllib.request.urlopen(url)
         return
     except Exception as e:
+        print('')
+        print('generate_url_error')
         print(e)
-        return ''
+        return e
