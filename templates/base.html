@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <meta charset="utf-8">
+                <title>{% block title %} {% endblock %}</title>
+                <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
+                <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
+                {% block header %}
+                {% endblock %}
+        </head>
+        <body>
+                <div class="container">
+                        <div class="page-header">
+                                <h1 class="text-center">JS Placas <small>Testador</small></h1>
+                                <ul class="nav nav-pills">
+                                    <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
+                                    <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
+                                    <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
+                                    <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                                </ul>
+                        </div>
+                        {% block content %}
+
+                        {% endblock %}
+                </div>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+                <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
+                {% block bottom %}
+                {% endblock %}
+        </body>
+
+</html>

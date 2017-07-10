@@ -155,7 +155,6 @@
                 var canvas = document.getElementById("myCanvas");
                 var ctx = canvas.getContext("2d");
                 ctx.font="30px Arial";
-
                 ctx.fillStyle = "#d5dbdb";
                 ctx.fillRect(0,0,450,450);
                 ctx.strokeRect(0,0,450,450);
@@ -209,23 +208,22 @@
                 var bot_enviar = document.getElementById("submit");
                 bot_enviar.addEventListener('click', function(event){
                         console.log(coordenadas);
+                        //add connector recently created to select box on the fly
+                        var connector_name = document.getElementById("nome-conector").value;
+                        var select_conn = document.getElementById("conector");
+                        var opt = document.createElement("option");
+                        opt.value = connector_name;
+                        opt.innerHTML = connector_name;
+                        select_conn.appendChild(opt);
 
-                        var name = document.getElementById("nome_placa").value;
-                        var fabric = document.getElementById("fabricante").value;
-                        var type = document.getElementById("tipo").value;
-                        var connector = document.getElementById("conector").value;
-
+                        //Send data to back end assycronously [coordinates and connector name]
                         $.ajax({
                                 type: "POST",
                                 url: "{{url_for('conn_scheema')}}",
                                 data:   {
                                                 c: JSON.stringify(coordenadas),
-                                                name: name,
-                                                fabric: fabric,
-                                                type: type,
-                                                connector: connector
+                                                name: connector_name
                                         }
-
                         }).done(function(o) {
                                 console.log('saved');
                                 alert("Conector Salvo");

@@ -1,0 +1,23 @@
+{% extends "base.html"%}
+
+{% block title %}  Login {% endblock %}
+
+{% block content %}
+<div class="col-md-4  col-md-offset-4">
+        <form class="" action="{{url_for('authentication')}}" method="post">
+                <div class="form-group">
+                        <label for="adm">Usuário</label>
+                        <input type="text" class="form-control" name="adm" id="adm">
+                </div>
+                <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" class="form-control" name="password" id="password">
+                </div>
+                <div class="form-group">
+                        <div class="col-md-2 col-md-offset-4">
+                                <button class="btn btn-default btn-lg" type="submit" name="button">Login</button>
+                        </div>
+                </div>
+        </form>
+</div>
+{% endblock %}

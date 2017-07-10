@@ -18,11 +18,5 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
         <script src="{{url_for('static', filename = 'js/drawingboard.min.js')}}"></script>
-        <script type="text/javascript">
-            $('#myModal').on('shown.bs.modal', function () {
-                $('#myInput').focus()
-                if (!data) return e.preventDefault() // stops modal from being shown
-            })
-        </script>
     </body>
 </html>

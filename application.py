@@ -101,14 +101,13 @@ def adicionar_placa():
                 with Image.open(f) as image:
                     cover = resizeimage.resize_contain(image, [1100, 520])
                     cover.save('static/pictures/raw/{0}'.format(filename), image.format)
+        else:
+            flash('Arquivo com extensão não permitida. Apenas .png serão considerados')
+            return redirect("add_placa")
 
-        print(fabricante)
-        conn = sqlite3.connect('db/banco_de_dados')
-        c = conn.cursor()
-        command = "INSERT INTO Placas (nome_placa, fabricante, tipo, conector) VALUES('{0}', '{1}', '{2}', '{3}')".format(placa, fabricante, tipo, conector)
-        c.execute(command)
-        conn.commit()
-        conn.close()
+
+        conector = database_helper.pick_connector_id(conector)
+        database_helper.save_board(placa, fabricante, tipo, conector)
         flash('Placa {0} Registrada'.format(placa))
         return redirect("add_placa")
 
@@ -156,18 +155,45 @@ def conn_scheema():
         return render_template('conn_scheema_register.html')
     else:
         values=request.form['c']
-        board_name = request.form['name']
-        print("Board name is " + board_name)
+        connector_name = request.form['name']
+        print("Nome do conector " + connector_name)
         coordinates = helpers.get_coordinates(values)
         commands = helpers.generate_commands(coordinates)
-        ##helpers.generate_url(commands)
-        database_helper.save_connector(session['connector_name'], commands)
+        #helpers.generate_url(commands)
+        database_helper.save_connector(connector_name, commands)
         return ''
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     if request.method == 'GET':
         dados_placas = database_helper.load_boards()
-        return render_template("test_board.html", dados_placas=dados_placas)
+        return render_template("test_form.html", dados_placas=dados_placas)
     else:
         placa = request.form['placa']
+        print("A placa é: " + placa)
+        board_id = database_helper.pick_board_id(placa)
+        connector_id = database_helper.load_connector_from_board(board_id)
+        connector_commands = database_helper.load_connector_command(connector_id)
+        session['connector_commands'] = connector_commands
+        session['hardware_test'] = True
+        session['board_name'] = placa
+        return redirect("hardware_test")
+
+
+@app.route('/hardware_test')
+def h_test():
+    if 'hardware_test' in session:
+        board_name = session['board_name']
+        helpers.generate_url(session['connector_commands'])
+        #kill sessions
+        session.pop('connector_commands', None)
+        session.pop('hardware_test', None)
+        session.pop('board_name', None)
+        return render_template("hardware_test.html", board_name=board_name)
+    else:
+        return render_template("denied_access.html")
+
+@app.route('/auth', methods=['GET','POST'])
+def authentication():
+    if request.method == 'GET':
+        return render_template("login.html")

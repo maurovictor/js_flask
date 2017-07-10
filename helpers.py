@@ -42,7 +42,7 @@ def generate_commands(coordinates):
                     byte = [pow(2, (j-1)) for j in bits]
                     byte = sum(byte)
                     commands.append(byte)
-
+            commands.reverse()
             return commands
 
     except Exception as e:
@@ -64,8 +64,9 @@ def generate_url(commands):
         print(url)
         urllib.request.urlopen(url)
         return
+
     except Exception as e:
-        print('')
+        print('########')
         print('generate_url_error')
         print(e)
-        return e
+        return ''
