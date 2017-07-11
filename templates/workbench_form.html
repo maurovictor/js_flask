@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title%} Escolher Bancada {% endblock%}
+{% block content %}
+        <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                        <table class="table table-bordered">
+                                <tr>
+                                        <th class="active"><h3 class="text-center" id="log">Bancada</h3></th>
+                                        <th class="success"><h3 class="text-center" id="reg">Registrar</h3></th>
+                                </tr>
+                        </table>
+
+                </div>
+        </div>
+        <div class="row">
+                <div class="col-md-4  col-md-offset-4">
+                        <form class="reg" action="{{url_for('work_bench')}}" method="post">
+                                <div class="form-group">
+                                        <label for="bancada-ip">IP</label>
+                                        <input type="text" class="form-control" name="bancada-ip" id="bancada-ip">
+                                </div>
+                                <div class="form-group">
+                                        <label for="bancada-nome">Nome da Bancada</label>
+                                        <input type="text" class="form-control" name="bancada-nome" id="bancada-nome">
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-md-2 col-md-offset-4">
+                                                <button class="btn btn-info btn-lg" type="submit" name="reg-button">Registrar</button>
+                                        </div>
+                                </div>
+                        </form>
+                        <form class="log" action="{{url_for('workbench_setup')}}" method="post">
+                                <div class="form-group">
+                                        <label for="bancada">Bancada</label>
+                                        <select type="text" class="form-control" name="bancada" id="bancada">
+                                                {% for bancada in workbenches %}
+                                                        <option value="{{bancada[0]}}">{{bancada[0]}}</option>
+                                                {% endfor %}
+                                        </select>
+                                </div>
+                                <div class="form-group">
+                                        <div class="col-md-2 col-md-offset-4">
+                                                <button class="btn btn-danger btn-lg" type="submit" name="button">Confirmar</button>
+                                        </div>
+                                </div>
+                        </form>
+                </div>
+                {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                                <div class="col-md-4 col-md-offset-8" id="flash-mess">
+                                        <div class="alert alert-success" role="alert">
+                                                <ul class=flashes>
+                                                        {% for message in messages %}
+                                                                <li>{{ message }}</li>
+                                                        {% endfor %}
+                                                </ul>
+                                        </div>
+                                </div>
+                        {% endif %}
+                {% endwith %}
+        </div>
+
+
+
+{% endblock %}
+
+{% block bottom %}
+        <script type="text/javascript">
+                $(".reg").hide();
+                $("#flash-mess").slideDown(300).delay(1000).slideUp(300);
+                $("#log").click(function(){
+                        $(".log").slideDown();
+                        $(".reg").slideUp();
+                });
+                $("#reg").click(function(){
+                        $(".reg").slideDown();
+                        $(".log").slideUp();
+                });
+                //$("#flash-mess").hide();
+
+        </script>
+{% endblock %}

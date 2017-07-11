@@ -22,6 +22,11 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/auth', methods=['GET','POST'])
+def authentication():
+    if request.method == 'GET':
+        return render_template("workbench_form.html")
+
 @app.route('/no_db')
 def no_db():
     return render_template('no_data_base.html')
@@ -34,9 +39,7 @@ def pagina_incial():
 def add_defeito():
 
     if request.method == 'GET':
-
         dados_placas = database_helper.load_boards() ## list of tuples of (board, fabric)
-
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
         conn = sqlite3.connect('db/banco_de_dados')
@@ -179,21 +182,33 @@ def test():
         session['board_name'] = placa
         return redirect("hardware_test")
 
-
 @app.route('/hardware_test')
 def h_test():
-    if 'hardware_test' in session:
+    if ('hardware_test' and 'workbench_ip') in session:
         board_name = session['board_name']
-        helpers.generate_url(session['connector_commands'])
+        helpers.generate_url(session['connector_commands'], session['workbench_ip'])
         #kill sessions
         session.pop('connector_commands', None)
         session.pop('hardware_test', None)
         session.pop('board_name', None)
         return render_template("hardware_test.html", board_name=board_name)
     else:
+        flash('Sem condições de iniciar o teste')
         return render_template("denied_access.html")
-
-@app.route('/auth', methods=['GET','POST'])
-def authentication():
+@app.route('/workbench', methods=['GET','POST'])
+def work_bench():
     if request.method == 'GET':
-        return render_template("login.html")
+        workbenches = database_helper.load_workbenches()
+        return render_template('workbench_form.html', workbenches=workbenches)
+    else:
+        name = request.form['bancada-nome']
+        ip = request.form['bancada-ip']
+        database_helper.save_workbench(ip, name)
+        return redirect("workbench")
+
+@app.route('/workbench_setup', methods=['POST'])
+def workbench_setup():
+    session['workbench_name'] = request.form['bancada']
+    session['workbench_ip'] = database_helper.pick_workbench_ip(request.form['bancada'])
+    flash('{0} configurada como bancada principal'.format(session['workbench_name']))
+    return redirect("workbench")

@@ -1,85 +1,57 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Adicionar Defeitos</title>
-        <!-- Bootstrap links and scripts -->
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
-        <script type="text/javascript">
-            $('#myModal').on('shown.bs.modal', function () {
-                $('#myInput').focus()
-                if (!data) return e.preventDefault() // stops modal from being shown
-            })
-        </script>
-
-        <!-- SUMMERNOTE REQUIREMENTS-->
+{% extends "base.html" %}
+{% block title %} Adicionar Defeito {% endblock %}
+{% block header %}
         <link href="{{url_for('static', filename='css/summernote.css')}}" rel="stylesheet">
-        <script src="{{url_for('static', filename='js/summernote.js')}}"></script>
+{% endblock %}
+{% block content %}
+    <div class="col-md-4 col-md-offset-4">
+        <form action="{{url_for('add_defeito')}}" method="post">
+          <div class="form-group">
+            <label for="nome_defeito">Nome do Defeito</label>
+            <input type="text" class="form-control" id="nome_defeito" placeholder="Nome do Defeito" name="nome_defeito">
+          </div>
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea type="text" class="form-control summernote" id="descricao" placeholder="Descrição do Defeito, Explicação" name="descricao"></textarea>
 
-    </head>
-    <body>
-        <div class="container">
-            <div class="page-header">
-                <h1 class="text-center">JS Placas <small>Testador</small></h1>
-                <ul class="nav nav-pills">
-                    <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
-                    <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
-                    <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
-                    <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+          </div>
+          <div class="form-group">
+            <label for="conserto">Conserto</label>
+            <textarea type="text" class="form-control summernote" id="conserto" placeholder="Instruções para consertar" name="conserto"></textarea>
+            <p class="help-block">Componentes a substituir, trilhas a reparar, passo a passo</p>
+          </div>
+          <div class="form-group">
+              <select class="form-control" name="placa" id="placa">
+                  {% for placa in dados_placas %}
+                      <option value="{{placa[0]}}">
+                          {{placa[0]}} | {{placa[1]}}
+                      </option>
+                  {% endfor %}
+              </select>
+          </div>
+
+          <div class="col-md-2 col-md-offset-4">
+              <button type="submit" class="btn btn-primary t">Submit</button>
+          </div>
+        </form>
+    </div>
+    <div class="col-md-4 ">
+        <div class="alert alert-info" role="alert" style="display:none">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
                 </ul>
-            </div>
-            <div class="col-md-4 col-md-offset-4">
-                <form action="{{url_for('add_defeito')}}" method="post">
-                  <div class="form-group">
-                    <label for="nome_defeito">Nome do Defeito</label>
-                    <input type="text" class="form-control" id="nome_defeito" placeholder="Nome do Defeito" name="nome_defeito">
-                  </div>
-                  <div class="form-group">
-                    <label for="descricao">Descrição</label>
-                    <textarea type="text" class="form-control summernote" id="descricao" placeholder="Descrição do Defeito, Explicação" name="descricao"></textarea>
-
-                  </div>
-                  <div class="form-group">
-                    <label for="conserto">Conserto</label>
-                    <textarea type="text" class="form-control summernote" id="conserto" placeholder="Instruções para consertar" name="conserto"></textarea>
-                    <p class="help-block">Componentes a substituir, trilhas a reparar, passo a passo</p>
-                  </div>
-                  <div class="form-group">
-                      <select class="form-control" name="placa" id="placa">
-                          {% for placa in dados_placas %}
-                              <option value="{{placa[0]}}">
-                                  {{placa[0]}} | {{placa[1]}}
-                              </option>
-                          {% endfor %}
-                      </select>
-                  </div>
-
-                  <div class="col-md-2 col-md-offset-4">
-                      <button type="submit" class="btn btn-primary t">Submit</button>
-                  </div>
-                </form>
-            </div>
-            <div class="col-md-4 ">
-                <div class="alert alert-info" role="alert" style="display:none">
-                    {% with messages = get_flashed_messages() %}
-                      {% if messages %}
-                        <ul class=flashes>
-                        {% for message in messages %}
-                          <li>{{ message }}</li>
-                        {% endfor %}
-                        </ul>
-                      {% endif %}
-                    {% endwith %}
-                </div>
-            </div>
-
+              {% endif %}
+            {% endwith %}
         </div>
-    </body>
+    </div>
+{% endblock %}
+{% block bottom %}
     <!-- summernote configuration -->
+    <script src="{{url_for('static', filename='js/summernote.js')}}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
           $('.summernote').summernote({
@@ -99,4 +71,4 @@
             {% endwith %}
         });
     </script>
-</html>
+{% endblock %}

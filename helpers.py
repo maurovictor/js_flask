@@ -51,7 +51,7 @@ def generate_commands(coordinates):
         print(e)
         return e
 
-def generate_url(commands):
+def generate_url(commands, ip):
     try:
         data = {}
         iterable_base = list(range(1,9))

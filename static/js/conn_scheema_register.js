@@ -33,7 +33,6 @@ ctx.canvas.addEventListener('click', function(event){
                 coordenadas.push(col);
                 coordenadas.push(bit);
         }
-
 });
 var limpar = document.getElementById("clean");
 limpar.addEventListener('click', function(event){

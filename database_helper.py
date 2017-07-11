@@ -35,6 +35,24 @@ def save_board(name, fabric, board_type, connector):
         print(e)
         print("##################")
 
+def save_workbench(ip, name):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "INSERT INTO Bancada (bancada_ip, bancada_nome) VALUES ('{0}', '{1}')"\
+                                    .format(ip, name)
+        c.execute(db_command)
+        conn.commit()
+        conn.close()
+        print("db:: workbench "+ name +" saved..")
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. work_bench: ")
+        print(e)
+        print("##################")
+
+
 
 def load_boards():
     try:
@@ -120,6 +138,21 @@ def pick_board_id(board_name):
         print(e)
         print("##################")
 
+def pick_workbench_ip(name):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT bancada_ip FROM Bancada WHERE bancada_nome=?"
+        c.execute(db_command, (name,))
+        workbench_ip = c.fetchone()[0]
+        return workbench_ip
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. pick_workbench_id: ")
+        print(e)
+        print("##################")
+
 
 def load_connector_from_board(board_id):
     try:
@@ -142,12 +175,29 @@ def load_connector_from_board(board_id):
 
 def load_connector_command(connector_id):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
-        c = conn.cursor()
+
         db_command = "SELECT byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 FROM Conector WHERE conector_id=?"
         c.execute(db_command, (connector_id,))
         relay_matrix_command = list(c.fetchall()[0])
         return relay_matrix_command
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. load_connector_command: ")
+        print(e)
+        print("##################")
+        return ''
+def load_workbenches():
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT bancada_nome FROM Bancada"
+        c.execute(db_command)
+        workbenches = c.fetchall()
+        conn.commit()
+        conn.close()
+        print("db: benches loaded")
+        return workbenches
     except Exception as e:
         print()
         print("##################")

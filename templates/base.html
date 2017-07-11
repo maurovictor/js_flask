@@ -17,13 +17,14 @@
                                     <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
                                     <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
                                     <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                                    <li role="presentation"><a href="{{url_for('work_bench')}}">Bancada</a></li>
                                 </ul>
                         </div>
                         {% block content %}
 
                         {% endblock %}
                 </div>
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
                 <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
                 {% block bottom %}
                 {% endblock %}
