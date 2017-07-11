@@ -193,7 +193,7 @@ def h_test():
         session.pop('board_name', None)
         return render_template("hardware_test.html", board_name=board_name)
     else:
-        flash('Sem condições de iniciar o teste')
+        flash('Bancada ou teste não configurado')
         return render_template("denied_access.html")
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():

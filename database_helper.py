@@ -175,7 +175,8 @@ def load_connector_from_board(board_id):
 
 def load_connector_command(connector_id):
     try:
-
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
         db_command = "SELECT byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 FROM Conector WHERE conector_id=?"
         c.execute(db_command, (connector_id,))
         relay_matrix_command = list(c.fetchall()[0])
@@ -191,7 +192,7 @@ def load_workbenches():
     try:
         conn = sqlite3.connect('db/banco_de_dados')
         c = conn.cursor()
-        db_command = "SELECT bancada_nome FROM Bancada"
+        db_command = "SELECT bancada_nome FROM Bancada ORDER BY bancada_id"
         c.execute(db_command)
         workbenches = c.fetchall()
         conn.commit()

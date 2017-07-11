@@ -60,7 +60,7 @@ def generate_url(commands, ip):
             data['byte_{0}'.format(i)] = commands[idx] ##add command values to dictionary
 
         data_url = urllib.parse.urlencode(data)
-        url = 'http://192.168.0.26/' + '?' + data_url
+        url = 'http://'+ ip + '/?' + data_url
         print(url)
         urllib.request.urlopen(url)
         return
