@@ -1,4 +1,53 @@
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def save_new_user(name, password):
+    password = generate_password_hash(password)
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "INSERT INTO Usuario (usuario_nome, usuario_senha, adm) VALUES('{0}', '{1}', '{2}')"\
+                            .format(name, password, 0)
+        c.execute(db_command)
+        conn.commit()
+        conn.close()
+        print("db:: " + name + " saved as a user")
+        return ''
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. save_new_user: ")
+        print(e)
+        print("##################")
+
+def load_hashed_password(user):
+    conn = sqlite3.connect('db/banco_de_dados')
+    c = conn.cursor()
+    db_command = "SELECT usuario_senha FROM Usuario WHERE usuario_nome=?"
+    c.execute(db_command, (user,))
+    hashed_password = c.fetchone()[0]
+    conn.commit()
+    conn.close()
+    return hashed_password
+def load_users_name():
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT usuario_nome FROM Usuario ORDER BY usuario_id"
+        c.execute(db_command)
+        users_names = c.fetchall()
+        users_names = [users_names[i][0] for i in range(len(users_names))]
+        conn.commit()
+        conn.close()
+        print("db:: loaded User Names")
+        return users_names
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. load_users_name: ")
+        print(e)
+        print("##################")
+
 
 def save_connector(name, commands):
     try:
@@ -16,6 +65,20 @@ def save_connector(name, commands):
         print("Erro na func. save_connector: ")
         print(e)
         print("##################")
+
+def load_role(user):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT adm FROM Usuario WHERE usuario_nome=?"
+        c.execute(db_command,(user,))
+        role = c.fetchone()[0]
+        role = bool(role)
+        conn.commit()
+        conn.close()
+        return role
+    except Exception as e:
+        raise
 
 
 def save_board(name, fabric, board_type, connector):
@@ -203,6 +266,25 @@ def load_workbenches():
         print()
         print("##################")
         print("Erro na func. load_connector_command: ")
+        print(e)
+        print("##################")
+        return ''
+
+def load_deffects(board_id):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT nome_defeito FROM Defeitos WHERE placa=?"
+        c.execute(db_command, (board_id,))
+        deffects = c.fetchall()
+        deffects = [deffects[i][0] for i in range(len(deffects))]
+        conn.commit()
+        conn.close()
+        return deffects
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. load_deffects: ")
         print(e)
         print("##################")
         return ''

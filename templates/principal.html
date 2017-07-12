@@ -1,45 +1,19 @@
-<!DOCTYPE html>
-<html lang="pt">
-    <head>
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
-    </head>
-    <body>
-        <div class="container">
-            <div class="page-header">
-                <h1 class="text-center">JS Placas <small>Testador</small></h1>
-                <ul class="nav nav-pills">
-                    <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
-                    <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
-                    <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
-                    <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
-                </ul>
-            </div>
-
-
+{% extends "base.html" %}
+{% block title %} Início {% endblock %}
+{% block content %}
             <div class="row">
                 <div class="container">
-                    <div class="col-md-4 col-md-offset-5">
-                        <div class="row">
-                            <span>
-                                    <a href="{{url_for('adicionar_placa')}}"><p><button class="btn btn-primary btn-lg" name="button">Adcionar Placa</button></p></a>
-                            </span>
-                            <span>
-                                    <a href="{{url_for('add_defeito')}}"><p><button class="btn btn-primary btn-lg" name="button">Adcionar Defeito</button></p></a>
-                            </span>
-
-
-                            <a href="{{url_for('connector')}}"><p><button class="btn btn-primary btn-lg" href="{{url_for('connector')}}" name="button">Adcionar Conector</button></p></a>
-
-
-                            <a href="{{url_for('test')}}"><p><button class="btn btn-primary btn-lg" href="{{url_for('test')}}" name="button">Testar</button></p></a>
-                        </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                        {% for message in messages %}
+                                                <div class="alert alert-info" role="alert">
+                                                        <h5 class="text-center">{{message}}</h5>
+                                                </div>
+                                        {% endfor %}
+                                {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
-
-        </div>
-    </body>
-</html>
+{% endblock %}

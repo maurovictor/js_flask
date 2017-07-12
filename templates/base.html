@@ -23,10 +23,24 @@
                                 </h1>
                                 <ul class="nav nav-pills">
                                     <li role="presentation"><a href="{{url_for('test')}}">Testar</a></li>
+                                    {% if 'user' in session %}
+                                    {% if session['role'] %}
                                     <li role="presentation"><a href="{{url_for('adicionar_placa')}}">Adicionar Placa</a></li>
+                                    {% endif %}
                                     <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
+                                    {% if session['role'] %}
                                     <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
+                                    {% endif %}
+                                    {% endif %}
                                     <li role="presentation"><a href="{{url_for('work_bench')}}">Bancada</a></li>
+                                    {% if 'user' not in session %}
+                                    <li role="presentation"><a href="{{url_for('authentication')}}">Login</a></li>
+                                    <li role="presentation"><a href="{{url_for('add_user')}}">Registrar</a></li>
+                                    {% endif %}
+                                    {% if 'user' in session%}
+                                    <li role="presentation"><a href="{{url_for('logout')}}">Sair</a></li>
+                                    {% endif %}
+
                                 </ul>
                         </div>
                         {% block content %}

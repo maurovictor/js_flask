@@ -13,7 +13,7 @@
 
                 </div>
         </div>
-        <div class="row">
+        <div class="row" id="2ndRow">
                 <div class="col-md-4  col-md-offset-4">
                         <form class="reg" action="{{url_for('work_bench')}}" method="post">
                                 <div class="form-group">
@@ -68,6 +68,7 @@
 {% block bottom %}
         <script type="text/javascript">
                 $(".reg").hide();
+                
                 $("#flash-mess").slideDown(300).delay(1000).slideUp(300);
                 $("#log").click(function(){
                         $(".log").slideDown();

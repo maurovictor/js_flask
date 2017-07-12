@@ -7,6 +7,18 @@
                 <div class="col-md-4 col-md-offset-4">
                         <h1><span class="label label-primary">{{board_name}}</span></h1>
                 </div>
+                <div class="col-md-4">
+                        <form action="index.html" method="post">
+                                <div class="form-group">
+                                        <label for="defeito">Escolha o Defeito</label>
+                                        <select class="" id="defeito" name="defeito">
+                                                {% for deffect in deffect_list %}
+                                                <option value="{{deffect}}">{{deffect}}</option>
+                                                {% endfor %}
+                                        </select>
+                                </div>
+                        </form>
+                </div>
         </div>
         <div class="row">
                 <div class="col-md-4 col-md-offset-5">

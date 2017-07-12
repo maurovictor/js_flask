@@ -2,6 +2,7 @@
 
 import os
 from flask import Flask, render_template, request, redirect, url_for, Request, flash, session
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from PIL import Image
 from resizeimage import resizeimage
@@ -25,7 +26,51 @@ def allowed_file(filename):
 @app.route('/auth', methods=['GET','POST'])
 def authentication():
     if request.method == 'GET':
-        return render_template("workbench_form.html")
+        return render_template("login.html")
+    else:
+        user = request.form['usuario']
+        password = request.form['password']
+
+        user_list = database_helper.load_users_name()
+        hashed_password = database_helper.load_hashed_password(user)
+        rigth_password = check_password_hash(hashed_password, password)
+        adm = database_helper.load_role(user)
+        if user in user_list and rigth_password:
+            session['user'] = user
+            session['role'] = adm
+            flash("Você está logado como: " + user)
+            return redirect(url_for('pagina_incial'))
+        else:
+            flash("Usuário não registrado ou dados incorretos")
+            return redirect("auth")
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    flash("Fora da Conta de usuário")
+    return redirect(url_for('pagina_incial'))
+
+
+@app.route('/add_user', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'GET':
+        return render_template('add_user.html')
+    else:
+        user_name        = request.form['usuario']
+        user_password    = request.form['password']
+        confirm_password = request.form['confirm-password']
+        user_name_list   = database_helper.load_users_name()
+
+        if user_name in user_name_list:
+            flash(user_name + " já existem como usuário")
+            return redirect("auth")
+        if user_password != confirm_password:
+            flash("Senhas incoerentes")
+            return redirect("add_user")
+        else:
+            database_helper.save_new_user(user_name, user_password)
+            flash(user_name + " salvo como usuário")
+            return redirect("auth")
 
 @app.route('/no_db')
 def no_db():
@@ -57,7 +102,7 @@ def add_defeito():
         c.execute(command)
         conn.commit()
         conn.close()
-        session['nome_placa'] = nome_placa
+        session['nome_placa']   = nome_placa
         session['nome_defeito'] = defeito
         return redirect("add_desenho")
 
@@ -186,15 +231,19 @@ def test():
 def h_test():
     if ('hardware_test' and 'workbench_ip') in session:
         board_name = session['board_name']
+        board_id = database_helper.pick_board_id(board_name)
+        deffect_list = database_helper.load_deffects(board_id)
+
         helpers.generate_url(session['connector_commands'], session['workbench_ip'])
         #kill sessions
         session.pop('connector_commands', None)
         session.pop('hardware_test', None)
         session.pop('board_name', None)
-        return render_template("hardware_test.html", board_name=board_name)
+        return render_template("hardware_test.html", board_name=board_name, deffect_list=deffect_list)
     else:
         flash('Bancada ou teste não configurado')
         return render_template("denied_access.html")
+
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
     if request.method == 'GET':
