@@ -208,6 +208,8 @@ def pick_workbench_ip(name):
         db_command = "SELECT bancada_ip FROM Bancada WHERE bancada_nome=?"
         c.execute(db_command, (name,))
         workbench_ip = c.fetchone()[0]
+        conn.commit()
+        conn.close()
         return workbench_ip
     except Exception as e:
         print()
@@ -216,6 +218,39 @@ def pick_workbench_ip(name):
         print(e)
         print("##################")
 
+def pick_board_name(board_id):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT nome_placa FROM Placas WHERE placa_id=?"
+        c.execute(db_command, (board_id,))
+        board_name = c.fetchone()[0]
+        conn.commit()
+        conn.close()
+        return board_name
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. pick_board_name: ")
+        print(e)
+        print("##################")
+
+def pick_board_id_from_deffect(deffect):
+    try:
+        conn = sqlite3.connect('db/banco_de_dados')
+        c = conn.cursor()
+        db_command = "SELECT placa_id FROM Placas WHERE nome_placa=?"
+        c.execute(db_command, (deffect,))
+        board_id = c.fetchone()[0]
+        conn.commit()
+        conn.close()
+        return board_name
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. pick_board_name: ")
+        print(e)
+        print("##################")
 
 def load_connector_from_board(board_id):
     try:

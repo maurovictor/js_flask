@@ -2,6 +2,7 @@
 
 import urllib.request
 import urllib.parse
+import database_helper
 '''
     Module for helping functions, in order to organize the code in the main file
 '''
@@ -70,3 +71,4 @@ def generate_url(commands, ip):
         print('generate_url_error')
         print(e)
         return ''
+##def build_picture_path(deffect):

@@ -227,22 +227,26 @@ def test():
         session['board_name'] = placa
         return redirect("hardware_test")
 
-@app.route('/hardware_test')
+@app.route('/hardware_test', methods=['GET', 'POST'])
 def h_test():
-    if ('hardware_test' and 'workbench_ip') in session:
-        board_name = session['board_name']
-        board_id = database_helper.pick_board_id(board_name)
-        deffect_list = database_helper.load_deffects(board_id)
+    if request.method == 'GET':
+        if ('hardware_test' and 'workbench_ip') in session:
+            board_name = session['board_name']
+            board_id = database_helper.pick_board_id(board_name)
+            deffect_list = database_helper.load_deffects(board_id)
 
-        helpers.generate_url(session['connector_commands'], session['workbench_ip'])
-        #kill sessions
-        session.pop('connector_commands', None)
-        session.pop('hardware_test', None)
-        session.pop('board_name', None)
-        return render_template("hardware_test.html", board_name=board_name, deffect_list=deffect_list)
-    else:
-        flash('Bancada ou teste não configurado')
-        return render_template("denied_access.html")
+            helpers.generate_url(session['connector_commands'], session['workbench_ip'])
+            #kill sessions
+            session.pop('connector_commands', None)
+            session.pop('hardware_test', None)
+            session.pop('board_name', None)
+            return render_template("hardware_test.html", board_name=board_name, deffect_list=deffect_list)
+        else:
+            flash('Bancada ou teste não configurado')
+            return render_template("denied_access.html")
+
+
+
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():

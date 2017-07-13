@@ -11,9 +11,11 @@
                         <form action="index.html" method="post">
                                 <div class="form-group">
                                         <label for="defeito">Escolha o Defeito</label>
+
                                         <select class="" id="defeito" name="defeito">
+                                                <option value=""></option>
                                                 {% for deffect in deffect_list %}
-                                                <option value="{{deffect}}">{{deffect}}</option>
+                                                        <option value="{{deffect}}">{{deffect}}</option>
                                                 {% endfor %}
                                         </select>
                                 </div>
@@ -25,4 +27,12 @@
                         <span class="label label-success">Conector configurado</span>
                 </div>
         </div>
+        <div class="row">
+                <div class="col-md-12">
+                        <img src="" alt="">
+                </div>
+        </div>
 {% endblock %}
+{% block botttom %}
+
+{% endblock  %}
