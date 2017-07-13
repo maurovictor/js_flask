@@ -71,4 +71,7 @@ def generate_url(commands, ip):
         print('generate_url_error')
         print(e)
         return ''
-##def build_picture_path(deffect):
+
+def get_picture_path(deffect, board_name):
+    path = "static/pictures/editions/" + deffect + "_" + board_name + ".png"
+    return path

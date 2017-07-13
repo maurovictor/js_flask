@@ -1,7 +1,7 @@
 ## Mauro Victor Castro
 
 import os
-from flask import Flask, render_template, request, redirect, url_for, Request, flash, session
+from flask import Flask, render_template, request, redirect, url_for, Request, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -244,9 +244,12 @@ def h_test():
         else:
             flash('Bancada ou teste não configurado')
             return render_template("denied_access.html")
-
-
-
+    else:
+        deffect = request.form['deffect']
+        board_name = request.form['board_name']
+        picture_path = helpers.get_picture_path(deffect, board_name)
+        print(picture_path)
+        return jsonify(picture_path)
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
