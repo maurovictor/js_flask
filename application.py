@@ -268,3 +268,7 @@ def workbench_setup():
     session['workbench_ip'] = database_helper.pick_workbench_ip(request.form['bancada'])
     flash('{0} configurada como bancada principal'.format(session['workbench_name']))
     return redirect("workbench")
+
+@app.route('/des')
+def des():
+    return render_template('des.html')
