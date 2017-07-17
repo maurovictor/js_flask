@@ -2,32 +2,36 @@
 
 {% block title %} Desenho {% endblock %}
 
+{% block header %}
+        <!-- stylesheet -->
+        <link href="static/css/literallycanvas.css" rel="stylesheet">
+
+        <!-- dependency: React.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+
+        <!-- Literally Canvas -->
+        <script src="static/js/literallycanvas.js"></script>
+{% endblock %}
+
 {% block content %}
-        <a href="#" onclick="return launchEditor('editableimage1', 'static/pictures/raw/Placa_Legal.jpg');">Edit!</a>
-        <img id="editableimage1" src="static/pictures/raw/Placa_Legal.jpg"/>
+        <div class="my-drawing"></div>
+                <!-- kick it off -->
+        <script>
+var backgroundImage = new Image()
+backgroundImage.src = '/static/pictures/raw/placa_90.png';
+LC.init(
+        document.getElementsByClassName('my-drawing')[0],
+        {imageURLPrefix: '/static/img',
+                backgroundShapes: [
+                        LC.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1}),
+                ]
+        }
+);
+    lc.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1})
+        </script>
 {% endblock %}
 
 {% block bottom %}
-        <!-- Load widget code -->
-        <script type="text/javascript" src="http://feather.aviary.com/imaging/v3/editor.js"></script>
-        <!-- Instantiate the widget -->
-        <script type="text/javascript">
 
-            var featherEditor = new Aviary.Feather({
-                apiKey: '1234567',
-                onSave: function(imageID, newURL) {
-                    var img = document.getElementById(imageID);
-                    img.src = newURL;
-                }
-            });
-
-            function launchEditor(id, src) {
-                featherEditor.launch({
-                    image: id,
-                    url: src
-                });
-                return false;
-            }
-
-        </script>
 {% endblock %}
