@@ -12,23 +12,43 @@
 
         <!-- Literally Canvas -->
         <script src="static/js/literallycanvas.js"></script>
+
 {% endblock %}
 
 {% block content %}
+        <button type="button" name="button" id="enviar_desenho">Enviar</button>
         <div class="my-drawing"></div>
                 <!-- kick it off -->
         <script>
-var backgroundImage = new Image()
-backgroundImage.src = '/static/pictures/raw/placa_90.png';
-LC.init(
-        document.getElementsByClassName('my-drawing')[0],
-        {imageURLPrefix: '/static/img',
-                backgroundShapes: [
-                        LC.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1}),
-                ]
-        }
-);
-    lc.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1})
+                var backgroundImage = new Image()
+                backgroundImage.src = '/static/pictures/raw/placa_90.png';
+
+                var lc = LC.init(
+                        document.getElementsByClassName('my-drawing')[0],
+                        {imageURLPrefix: '/static/img',
+                                backgroundShapes: [
+                                        LC.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1}),
+                                ]
+                        }
+                );
+                lc.setZoom(0.2);
+                lc.setPan(100, 100);
+                console.log(lc);
+                $('#enviar_desenho').click( function(e) {
+                        e.preventDefault();
+                        var canvas = lc.getImage();
+                        var dataURL = canvas.toDataURL();
+                        $.ajax({
+                                type: "POST",
+                                url: "{{url_for('desenho')}}",
+                                data: {
+                                        imageBase64: dataURL
+                                }
+                        }).done(function(o) {
+                                console.log('saved');
+                                alert("imagem enviada para o servidor");
+                        });
+                });
         </script>
 {% endblock %}
 

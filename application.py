@@ -169,8 +169,6 @@ def desenho():
             return render_template("denied_access.html")
     if request.method == 'POST':
         try:
-            #print(session['nome_placa'])
-            #session.pop('nome_placa', None)
             image_b64 = request.values['imageBase64'].strip()
             image_b64 = image_b64[22:]
 
@@ -180,8 +178,11 @@ def desenho():
             img = Image.open(img_bytes, mode='r')
             img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'],\
                                     session['nome_defeito'],session['nome_placa']))
-            flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'], \
+            flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'],\
                                                                 session['nome_placa']))
+
+            session.pop('nome_placa', None)
+            session.pop('nome_defeito', None)
 
         except Exception as e:
             print('desenho')
@@ -271,4 +272,6 @@ def workbench_setup():
 
 @app.route('/des')
 def des():
+    session['nome_placa'] = "asdkflhasdf"
+    session['nome_defeito'] = "kwejfbqjwkrbhfdvs"
     return render_template('des.html')
