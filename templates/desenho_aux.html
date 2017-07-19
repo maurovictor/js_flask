@@ -1,99 +1,54 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Adicionar desenho</title>
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
+{% extends "base.html"%}
 
+{% block title %} Desenho {% endblock %}
 
-        <!-- drawingboard.js -->
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/drawingboard.min.css')}}">
-
-        <!-- stylesheet LiterralyCanvas -->
-        <link href="/static/css/literallycanvas.css" rel="stylesheet">
+{% block header %}
+        <!-- stylesheet -->
+        <link href="static/css/literallycanvas.css" rel="stylesheet">
 
         <!-- dependency: React.js -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
 
         <!-- Literally Canvas -->
-        <script src="/static/js/literallycanvas.js"></script>
+        <script src="static/js/literallycanvas.js"></script>
+{% endblock %}
 
-    </head>
-    <body>
-        <div class="container">
-            <div class="page-header">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h1>JS Placas <small>Testador</small></h1>
-                    </div>
-                    <div class="col-md-2">
-                        <h1><button type="button" class="btn btn-primary" id="enviar_desenho">Enviar Imagem</button></h1>
-                    </div>
-                    <div class="col-md-1">
-                        <h1><a href="{{url_for('add_defeito')}}"><button type="button" class="btn btn-defaulr" id="enviar_desenho">Avançar</button></a></h1>
-                    </div>
-                    <div class="col-md-4">
-                        <h1><small>Desenho Auxiliar</small></h1>
-                    </div>
-                </div>
+{% block content %}
+        <button type="button" name="button" id="enviar_desenho">Enviar</button>
+        <div class="my-drawing"></div>
+{% endblock %}
 
-            </div>
+{% block bottom %}
+        <script>
+                var backgroundImage = new Image()
+                backgroundImage.src = "{{'/static/pictures/raw/{0}.png'.format(nome_placa)}}";
 
-            <div class="my-drawing"></div>
-            <!--
-            <div class="col-md-4">
-                <div class="example" data-example="1">
-                    <div class="board" id="default-board"></div>
-                </div>
-            </div>
-                -->
-    </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
-        <!-- <script src="{{url_for('static', filename = 'js/drawingboard.min.js')}}"></script> -->
-        <script type="text/javascript">
-            $('#myModal').on('shown.bs.modal', function () {
-                $('#myInput').focus()
-                if (!data) return e.preventDefault() // stops modal from being shown
-            })
-        </script>
-        <style>
-        	#default-board {
-        		width: 1100px;
-        		height: 520px;
-        	}
-        </style>
-        <!-- drawingboard code -->
-        <script type="text/javascript">
-            //create the drawingboard by passing it the #id of the wanted container
-            var defaultBoard = new DrawingBoard.Board('default-board',{
-                background: "{{url_for('static', filename = 'pictures/raw/{0}.png'.format(nome_placa))}}",
-                webStorage: 'false'
-            });
-            defaultBoard.addControl('Download');
-        </script>
-
-        <!-- Enviar o desenho para o servidor -->
-
-        <script type="text/javascript">
-            $('#enviar_desenho').click( function() {
-                $('.drawing-board-canvas').attr("name", "desenho_editado")
-                var canvas = document.getElementsByClassName("drawing-board-canvas")[0];
-
-                var dataURL = canvas.toDataURL();
-                $.ajax({
-                        type: "POST",
-                        url: "{{url_for('desenho')}}",
-                        data: {
-                        imageBase64: dataURL
+                var lc = LC.init(
+                        document.getElementsByClassName('my-drawing')[0],
+                        {imageURLPrefix: '/static/img',
+                                backgroundShapes: [
+                                        LC.createShape('Image', {x: 0, y: 0, image: backgroundImage, scale: 1}),
+                                ]
                         }
-                }).done(function(o) {
-                        console.log('saved');
-                        alert("imagem enviada para o servidor");
+                );
+                lc.setZoom(0.2);
+                lc.setPan(100, 100);
+                console.log(lc);
+                $('#enviar_desenho').click( function(e) {
+                        e.preventDefault();
+                        var canvas = lc.getImage();
+                        var dataURL = canvas.toDataURL();
+                        $.ajax({
+                                type: "POST",
+                                url: "{{url_for('desenho')}}",
+                                data: {
+                                        imageBase64: dataURL
+                                }
+                        }).done(function(o) {
+                                console.log('saved');
+                                alert("imagem enviada para o servidor");
+                        });
                 });
-            });
         </script>
-    </body>
-</html>
+{% endblock %}

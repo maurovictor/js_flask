@@ -164,6 +164,7 @@ def desenho():
     if request.method == 'GET':
         try:
             nome_placa = session['nome_placa']
+            session.pop('nome_placa', None)
             return render_template("desenho_aux.html", nome_placa=nome_placa)
         except Exception as e:
             return render_template("denied_access.html")

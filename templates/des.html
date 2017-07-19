@@ -12,13 +12,14 @@
 
         <!-- Literally Canvas -->
         <script src="static/js/literallycanvas.js"></script>
-
 {% endblock %}
 
 {% block content %}
         <button type="button" name="button" id="enviar_desenho">Enviar</button>
         <div class="my-drawing"></div>
-                <!-- kick it off -->
+{% endblock %}
+
+{% block bottom %}
         <script>
                 var backgroundImage = new Image()
                 backgroundImage.src = '/static/pictures/raw/placa_90.png';
@@ -50,8 +51,4 @@
                         });
                 });
         </script>
-{% endblock %}
-
-{% block bottom %}
-
 {% endblock %}

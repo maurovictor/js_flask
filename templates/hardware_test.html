@@ -1,6 +1,6 @@
 {% extends "base.html"%}
 
-{%block title%} {% endblock %}
+{%block title%}Hardware Test{% endblock %}
 
 {% block header %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
@@ -50,10 +50,14 @@
         </div>
         <div class="row">
                 <div class="col-md-12">
-                        <img src="" alt="" id="board-pic">
+                        <img src="" alt="" id="board-pic" height="auto">
                 </div>
         </div>
 {% endblock %}
 {% block botttom %}
-        
+        <style media="screen">
+                img{
+                        width: 100%;
+                }
+        </style>
 {% endblock  %}
