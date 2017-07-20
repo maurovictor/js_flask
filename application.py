@@ -253,10 +253,12 @@ def h_test():
     else:
         deffect = request.form['deffect']
         board_name = request.form['board_name']
+        board_docs = database_helper.pick_deffect_docs(deffect)
+
         large_picture_path = helpers.get_picture_path(deffect, board_name, 'large')
         small_picture_path = helpers.get_picture_path(deffect, board_name, 'small')
 
-        return jsonify([large_picture_path, small_picture_path])
+        return jsonify([large_picture_path, small_picture_path, board_docs])
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
@@ -283,4 +285,5 @@ def des():
     return render_template('des.html')
 @app.route('/zoom')
 def zoom():
-    return render_template('zoom.html')
+    board_docs = database_helper.pick_deffect_docs('defeito 1')
+    return render_template('zoom.html', docs = board_docs)

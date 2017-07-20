@@ -323,3 +323,19 @@ def load_deffects(board_id):
         print(e)
         print("##################")
         return ''
+
+def pick_deffect_docs(deffect_name):
+    conn = sqlite3.connect('db/banco_de_dados')
+    c = conn.cursor()
+
+    db_command_1 = "SELECT descricao FROM Defeitos WHERE nome_defeito=?"
+    db_command_2 = "SELECT conserto FROM Defeitos WHERE nome_defeito=?"
+
+    c.execute(db_command_1, (deffect_name,))
+    description = c.fetchone()[0]
+    c.execute(db_command_2, (deffect_name,))
+    fixing = c.fetchone()[0]
+
+    conn.commit()
+    conn.close()
+    return [description, fixing]

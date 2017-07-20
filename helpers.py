@@ -8,6 +8,9 @@ import database_helper
     Module for helping functions, in order to organize the code in the main file
 '''
 
+'''
+Get the coordinates of the dot contacts on the contact matrix 
+'''
 def get_coordinates(REQUEST_STRING):
     if REQUEST_STRING == '[]': ## If the string data from request is empty return empty list
         print('EMPTY REQUEST COMMANDS')
