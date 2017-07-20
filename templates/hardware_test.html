@@ -1,9 +1,12 @@
-{% extends "base.html"%}
+{% extends 'base.html' %}
 
-{%block title%}Hardware Test{% endblock %}
+{% block title %} Teste de zoom {% endblock%}
 
 {% block header %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+        <link rel="stylesheet" href="{{url_for('static', filename='css/magnify.css')}}">
+        <script src="{{url_for('static', filename='js/jquery.magnify.js')}}"></script>
+        <script src="{{url_for('static', filename='js/jquery.magnify-mobile.js')}}"></script>
         <script type="text/javascript">
                 var send_deffect = function(){
                         var board_name = document.getElementById("board-name").innerHTML;
@@ -16,7 +19,11 @@
                                         board_name: board_name
                                 },
                                 success: function(responseData){
-                                        $("#board-pic").attr('src', responseData);
+                                        $("#board-pic").attr('src', responseData[1]);
+                                        $("#board-pic").attr('data-magnify-src', responseData[0]);
+
+                                        //console.log(responseData);
+                                        //$("#board-pic").attr('data-magnify-src', responseData);
                                 }
                         });
                 }
@@ -28,6 +35,7 @@
                 <div class="col-md-4 col-md-offset-4">
                         <h1><span class="label label-primary" id="board-name">{{board_name}}</span></h1>
                 </div>
+
                 <div class="col-md-4">
                         <form action="index.html" method="post">
                                 <div class="form-group">
@@ -49,15 +57,15 @@
                 </div>
         </div>
         <div class="row">
-                <div class="col-md-12">
-                        <img src="" alt="" id="board-pic" height="auto">
-                </div>
+                <img src="{{url_for('static', filename='pictures/raw/small_{0}.png'.format(board_name))}}" class="zoom" id="board-pic" data-magnify-src="{{url_for('static', filename='pictures/raw/large_{0}.png'.format(board_name))}}">
         </div>
+
 {% endblock %}
-{% block botttom %}
-        <style media="screen">
-                img{
-                        width: 100%;
-                }
-        </style>
-{% endblock  %}
+
+{% block bottom %}
+        <script type="text/javascript">
+                $(document).ready(function() {
+                        $('.zoom').magnify();
+                });
+        </script>
+{% endblock %}

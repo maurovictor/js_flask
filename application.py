@@ -50,7 +50,6 @@ def logout():
     flash("Fora da Conta de usuário")
     return redirect(url_for('pagina_incial'))
 
-
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     if request.method == 'GET':
@@ -148,7 +147,8 @@ def adicionar_placa():
             with open('static/pictures/raw/{0}'.format(filename), 'r+b') as f:
                 with Image.open(f) as image:
                     cover = resizeimage.resize_contain(image, [1100, 520])
-                    cover.save('static/pictures/raw/{0}'.format(filename), image.format)
+                    cover.save('static/pictures/raw/small_{0}'.format(filename), image.format)
+                    image.save('static/pictures/raw/large_{0}'.format(filename), image.format)
         else:
             flash('Arquivo com extensão não permitida. Apenas .png serão considerados')
             return redirect("add_placa")
@@ -164,7 +164,6 @@ def desenho():
     if request.method == 'GET':
         try:
             nome_placa = session['nome_placa']
-            session.pop('nome_placa', None)
             return render_template("desenho_aux.html", nome_placa=nome_placa)
         except Exception as e:
             return render_template("denied_access.html")
@@ -172,21 +171,26 @@ def desenho():
         try:
             image_b64 = request.values['imageBase64'].strip()
             image_b64 = image_b64[22:]
-
             decoded = base64.b64decode(image_b64)
 
             img_bytes = io.BytesIO(decoded)
             img = Image.open(img_bytes, mode='r')
+
             img.save("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'],\
                                     session['nome_defeito'],session['nome_placa']))
             flash("Defeito {0} adicionado à placa {1}".format(session['nome_defeito'],\
                                                                 session['nome_placa']))
+            with open("{0}editions/{1}_{2}.png".format(app.config['UPLOAD_FOLDER'],\
+                session['nome_defeito'],session['nome_placa']), 'r+b') as f:
+                with Image.open(f) as image:
+                    cover = resizeimage.resize_contain(image, [1100, 520])
+                    cover.save('static/pictures/editions/small_{0}_{1}.png'.format(session['nome_defeito'], session['nome_placa']), image.format)
+                    image.save('static/pictures/editions/large_{0}_{1}.png'.format(session['nome_defeito'], session['nome_placa']), image.format)
 
             session.pop('nome_placa', None)
             session.pop('nome_defeito', None)
-
         except Exception as e:
-            print('desenho')
+            print("Erro na rota de desenho(POST)")
             print(e)
 
         return ''
@@ -249,9 +253,10 @@ def h_test():
     else:
         deffect = request.form['deffect']
         board_name = request.form['board_name']
-        picture_path = helpers.get_picture_path(deffect, board_name)
-        print(picture_path)
-        return jsonify(picture_path)
+        large_picture_path = helpers.get_picture_path(deffect, board_name, 'large')
+        small_picture_path = helpers.get_picture_path(deffect, board_name, 'small')
+
+        return jsonify([large_picture_path, small_picture_path])
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
@@ -276,3 +281,6 @@ def des():
     session['nome_placa'] = "asdkflhasdf"
     session['nome_defeito'] = "kwejfbqjwkrbhfdvs"
     return render_template('des.html')
+@app.route('/zoom')
+def zoom():
+    return render_template('zoom.html')

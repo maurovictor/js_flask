@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %} Teste de zoom {% endblock%}
+
+{% block header %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+        <link rel="stylesheet" href="{{url_for('static', filename='css/magnify.css')}}">
+        <script src="{{url_for('static', filename='js/jquery.magnify.js')}}"></script>
+        <script src="{{url_for('static', filename='js/jquery.magnify-mobile.js')}}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<img src="{{url_for('static', filename='pictures/raw/small_placa_17.png')}}" class="zoom" data-magnify-src="{{url_for('static', filename='pictures/raw/large_placa_17.png')}}">
+
+{% endblock %}
+
+{% block bottom %}
+        <script type="text/javascript">
+                $(document).ready(function() {
+                        $('.zoom').magnify();
+                });
+        </script>
+{% endblock %}

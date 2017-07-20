@@ -73,6 +73,10 @@ def generate_url(commands, ip):
         print(e)
         return ''
 
-def get_picture_path(deffect, board_name):
-    path = "static/pictures/editions/" + deffect + "_" + board_name + ".png"
-    return path
+def get_picture_path(deffect, board_name, size):
+    if size == 'large':
+        path = "static/pictures/editions/large_" + deffect + "_" + board_name + ".png"
+        return path
+    if size == 'small':
+        path = "static/pictures/editions/small_" + deffect + "_" + board_name + ".png"
+        return path
