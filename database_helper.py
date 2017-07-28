@@ -278,6 +278,8 @@ def load_connector_command(connector_id):
         db_command = "SELECT byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 FROM Conector WHERE conector_id=?"
         c.execute(db_command, (connector_id,))
         relay_matrix_command = list(c.fetchall()[0])
+        conn.commit()
+        conn.close()
         return relay_matrix_command
     except Exception as e:
         print()

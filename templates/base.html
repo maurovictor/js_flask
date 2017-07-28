@@ -6,6 +6,15 @@
                 <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
                 <link rel="stylesheet" href="{{url_for('static', filename = 'css/bootstrap-theme.min.css')}}">
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+                <style media="screen">
+                        .page-header {
+                                padding-bottom: 9px;
+                                margin: 40px 0 20px;
+                                border-bottom: 3px solid #eee;
+                                width: 100%;
+                        }
+                </style>
+
                 {% block header %}
                 {% endblock %}
         </head>

@@ -86,7 +86,7 @@ def add_defeito():
         dados_placas = database_helper.load_boards() ## list of tuples of (board, fabric)
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect('db/banco_de_dados.db')
         c = conn.cursor()
         defeito = request.form['nome_defeito']
         descricao = request.form['descricao']
@@ -221,6 +221,7 @@ def conn_scheema():
 def test():
     if request.method == 'GET':
         dados_placas = database_helper.load_boards()
+        print
         return render_template("test_form.html", dados_placas=dados_placas)
     else:
         placa = request.form['placa']
