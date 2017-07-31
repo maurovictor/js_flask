@@ -81,12 +81,11 @@ def pagina_incial():
 
 @app.route('/add_defeito', methods=['GET', 'POST'])
 def add_defeito():
-
     if request.method == 'GET':
         dados_placas = database_helper.load_boards() ## list of tuples of (board, fabric)
         return render_template('add_defeito.html', dados_placas = dados_placas)
     else:
-        conn = sqlite3.connect('db/banco_de_dados.db')
+        conn = sqlite3.connect('db/banco_de_dados')
         c = conn.cursor()
         defeito = request.form['nome_defeito']
         descricao = request.form['descricao']
