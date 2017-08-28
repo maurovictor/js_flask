@@ -278,12 +278,8 @@ def workbench_setup():
     flash('{0} configurada como bancada principal'.format(session['workbench_name']))
     return redirect("workbench")
 
-@app.route('/des')
-def des():
-    session['nome_placa'] = "asdkflhasdf"
-    session['nome_defeito'] = "kwejfbqjwkrbhfdvs"
-    return render_template('des.html')
-@app.route('/zoom')
-def zoom():
-    board_docs = database_helper.pick_deffect_docs('defeito 1')
-    return render_template('zoom.html', docs = board_docs)
+@app.route('/crud', methods=['POST', 'GET'])
+def crud():
+    if request.method == 'GET':
+        boards = database_helper.load_boards()
+        
