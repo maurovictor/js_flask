@@ -3,13 +3,14 @@
 import urllib.request
 import urllib.parse
 import database_helper
+from flask import redirect
 
 '''
     Module for helping functions, in order to organize the code in the main file
 '''
 
 '''
-Get the coordinates of the dot contacts on the contact matrix 
+Get the coordinates of the dot contacts on the contact matrix
 '''
 def get_coordinates(REQUEST_STRING):
     if REQUEST_STRING == '[]': ## If the string data from request is empty return empty list
@@ -57,24 +58,39 @@ def generate_commands(coordinates):
         return e
 
 def generate_url(commands, ip):
-    try:
-        data = {}
-        iterable_base = list(range(1,9))
-        iterable_base.reverse()
-        for idx,i in enumerate(iterable_base):
-            data['byte_{0}'.format(i)] = commands[idx] ##add command values to dictionary
+    data = {}
+    iterable_base = list(range(8))
+    iterable_base.reverse()
+    for idx,i in enumerate(iterable_base):
+        data['byte_{0}'.format(i)] = commands[idx] ##add command values to dictionary
 
-        data_url = urllib.parse.urlencode(data)
+    data_url = urllib.parse.urlencode(data)
+    try:
+        wifi_connection = True
         url = 'http://'+ ip + '/?' + data_url
         print(url)
         urllib.request.urlopen(url)
-        return
+        return True
 
     except Exception as e:
+        wifi_connection = False
         print('########')
         print('generate_url_error')
         print(e)
-        return ''
+        return False
+
+def activate_phase_url(ip):
+    try:
+        url='http://' + ip + '/activate_phase'
+        urllib.request.urlopen(url)
+        return True
+    except Exception as e:
+        print('----------')
+        print()
+        print('Problem with /activate_phase request')
+        print()
+        print('----------')
+        return False
 
 def get_picture_path(deffect, board_name, size):
     if size == 'large':

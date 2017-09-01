@@ -9,6 +9,8 @@ from resizeimage import resizeimage
 import sqlite3
 import base64
 import io
+import urllib.request
+import urllib.parse
 import helpers
 import database_helper
 
@@ -240,8 +242,10 @@ def h_test():
             board_name = session['board_name']
             board_id = database_helper.pick_board_id(board_name)
             deffect_list = database_helper.load_deffects(board_id)
+            wifi_connection = False
 
-            helpers.generate_url(session['connector_commands'], session['workbench_ip'])
+            while wifi_connection == False:
+                wifi_connection = helpers.generate_url(session['connector_commands'], session['workbench_ip'])
             #kill sessions
             session.pop('connector_commands', None)
             session.pop('hardware_test', None)
@@ -259,6 +263,14 @@ def h_test():
         small_picture_path = helpers.get_picture_path(deffect, board_name, 'small')
 
         return jsonify([large_picture_path, small_picture_path, board_docs])
+
+
+@app.route('/activate_phase')
+def phase():
+    helpers.activate_phase_url(session["workbench_ip"])
+    print(session["workbench_ip"])
+    return ''
+
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
@@ -278,8 +290,12 @@ def workbench_setup():
     flash('{0} configurada como bancada principal'.format(session['workbench_name']))
     return redirect("workbench")
 
-@app.route('/crud', methods=['POST', 'GET'])
-def crud():
+@app.route('/boards_crud', methods=['POST', 'GET'])
+def b_crud():
     if request.method == 'GET':
-        boards = database_helper.load_boards()
-        
+        boards = database_helper.load_board_rows()
+        return render_template("boards_crud.html", rows=boards)
+    else:
+        board_ids = tuple(filter(None, list(request.form.values())))
+        database_helper.delete_board_rows(board_ids)
+        return redirect("boards_crud")

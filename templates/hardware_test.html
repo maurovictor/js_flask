@@ -20,11 +20,24 @@
                                 success: function(responseData){
                                         $("#board-pic").attr('src', responseData[1]);
                                         $("#board-pic").attr('data-magnify-src', responseData[0]);
+                                        $("#board-pic").attr('data-magnify-src', responseData[0]);
                                         $(".fixing")[0].innerHTML = responseData[2][1];
                                         $(".description")[0].innerHTML = responseData[2][0];
 
-                                        //console.log(responseData[2][1]);
+                                        console.log(responseData[0]);
                                         //$("#board-pic").attr('data-magnify-src', responseData);
+                                }
+                        });
+                }
+        </script>
+        <script type="text/javascript">
+                var turn_phase = function(){
+                        $.ajax({
+                                url: "{{url_for('phase')}}",
+                                type: "GET",
+                                data: "",
+                                success: function(){
+                                        alert("Fase Ligada");
                                 }
                         });
                 }
@@ -42,6 +55,7 @@
                 </div>
                 <div class="col-md-4 ">
                         <h1><span class="label label-primary" id="board-name">{{board_name}}</span></h1>
+                        <span><button type="button" class="btn btn-danger" name="button" onclick="turn_phase()">Switch Phase</button></span>
                 </div>
 
                 <div class="col-md-4">

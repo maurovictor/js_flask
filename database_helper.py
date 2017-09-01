@@ -341,3 +341,54 @@ def pick_deffect_docs(deffect_name):
     conn.commit()
     conn.close()
     return [description, fixing]
+
+def load_board_rows():
+    conn = sqlite3.connect('db/banco_de_dados')
+    c = conn.cursor()
+
+    db_command_1 = "SELECT * FROM Placas"
+    c.execute(db_command_1,)
+    rows = c.fetchall()
+    #take only the value of connector id
+    b_connectors = [ i[4] for i in rows ] # b_connectors = board_connectors, not dab_connectors
+    #Create a request for every connector
+    b_conn_name_req = ["SELECT nome_conector FROM Conector WHERE conector_id={}".format(i) for i in b_connectors]
+
+    b_conn_names = []
+    for req in b_conn_name_req:
+        c.execute(req)
+        b_conn_name = c.fetchone()[0]
+        b_conn_names.append(b_conn_name)
+
+    rows = [list(i) for i in rows]
+    for i in range(len(rows)):
+        rows[i][4] = b_conn_names[i]
+
+    return rows
+
+def delete_board_rows(board_ids_list=()):
+    try:
+        conn = sqlite3.connect("db/banco_de_dados")
+        c = conn.cursor()
+    except Exception as e:
+        print("-----")
+        print("")
+        print("Problems while trying to connect to sqlite3 DB")
+        print("")
+        print("-----")
+    try:
+        if len(board_ids_list) == 1:
+            board_ids_list = "("+ board_ids_list[0] +")"
+        
+        db_command = "DELETE FROM Placas WHERE placa_id IN{}".format(board_ids_list)
+        print(db_command)
+        c.execute(db_command)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("-----")
+        print("")
+        print("Problems while trying to delete rows from Placas' table")
+        print(e)
+        print("")
+        print("-----")
