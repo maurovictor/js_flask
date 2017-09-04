@@ -244,8 +244,11 @@ def h_test():
             deffect_list = database_helper.load_deffects(board_id)
             wifi_connection = False
 
-            while wifi_connection == False:
+            for i in range(50):
                 wifi_connection = helpers.generate_url(session['connector_commands'], session['workbench_ip'])
+                if wifi_connection == True:
+                    break
+            
             #kill sessions
             session.pop('connector_commands', None)
             session.pop('hardware_test', None)
