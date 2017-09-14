@@ -1,5 +1,4 @@
 ## Mauro Victor Castro
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, Request, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -248,11 +247,10 @@ def h_test():
                 wifi_connection = helpers.generate_url(session['connector_commands'], session['workbench_ip'])
                 if wifi_connection == True:
                     break
-            
+
             #kill sessions
             session.pop('connector_commands', None)
             session.pop('hardware_test', None)
-            session.pop('board_name', None)
             return render_template("hardware_test.html", board_name=board_name, deffect_list=deffect_list)
         else:
             flash('Bancada ou teste não configurado')
@@ -278,7 +276,7 @@ def phase():
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
     if request.method == 'GET':
-        workbenches = database_helper.load_workbenches()
+        workbenches = database_helper.load_available_workbenches()
         return render_template('workbench_form.html', workbenches=workbenches)
     else:
         name = request.form['bancada-nome']
@@ -290,6 +288,8 @@ def work_bench():
 def workbench_setup():
     session['workbench_name'] = request.form['bancada']
     session['workbench_ip'] = database_helper.pick_workbench_ip(request.form['bancada'])
+    # define board as busy
+    database_helper.set_workbench_as_busy(session['workbench_name']) 
     flash('{0} configurada como bancada principal'.format(session['workbench_name']))
     return redirect("workbench")
 

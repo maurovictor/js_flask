@@ -288,15 +288,16 @@ def load_connector_command(connector_id):
         print(e)
         print("##################")
         return ''
-def load_workbenches():
+def load_available_workbenches():
     try:
         conn = sqlite3.connect('db/banco_de_dados')
         c = conn.cursor()
-        db_command = "SELECT bancada_nome FROM Bancada ORDER BY bancada_id"
+        db_command = "SELECT bancada_nome FROM Bancada WHERE bancada_ocupada = 0 ORDER BY bancada_id"
         c.execute(db_command)
         workbenches = c.fetchall()
         conn.commit()
         conn.close()
+        workbenches = [item[0] for item in workbenches]
         print("db: benches loaded")
         return workbenches
     except Exception as e:
@@ -379,7 +380,7 @@ def delete_board_rows(board_ids_list=()):
     try:
         if len(board_ids_list) == 1:
             board_ids_list = "("+ board_ids_list[0] +")"
-        
+
         db_command = "DELETE FROM Placas WHERE placa_id IN{}".format(board_ids_list)
         print(db_command)
         c.execute(db_command)
@@ -392,3 +393,11 @@ def delete_board_rows(board_ids_list=()):
         print(e)
         print("")
         print("-----")
+
+def set_workbench_as_busy(workbench_name):
+    conn = sqlite3.connect("db/banco_de_dados")
+    c = conn.cursor()
+    db_command = "UPDATE Bancada SET bancada_ocupada=1 WHERE bancada_nome=?"
+    c.execute(db_command, (workbench_name,))
+    conn.commit()
+    conn.close()
