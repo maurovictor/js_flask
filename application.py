@@ -289,9 +289,17 @@ def workbench_setup():
     session['workbench_name'] = request.form['bancada']
     session['workbench_ip'] = database_helper.pick_workbench_ip(request.form['bancada'])
     # define board as busy
-    database_helper.set_workbench_as_busy(session['workbench_name']) 
+    database_helper.set_workbench_as_busy(session['workbench_name'])
     flash('{0} configurada como bancada principal'.format(session['workbench_name']))
     return redirect("workbench")
+
+@app.route('/leave_workbench', methods=['POST'])
+def leave_workbench():
+    database_helper.set_workbench_as_free(session["workbench_name"])
+    session.pop('workbench_name', None)
+    session.pop('workbench_ip', None)
+    return redirect("workbench")
+
 
 @app.route('/boards_crud', methods=['POST', 'GET'])
 def b_crud():
@@ -302,3 +310,9 @@ def b_crud():
         board_ids = tuple(filter(None, list(request.form.values())))
         database_helper.delete_board_rows(board_ids)
         return redirect("boards_crud")
+
+@app.route('/workbench_adm', methods=['POST','GET'])
+def workbench_adm():
+    if request.method == 'GET':
+        busy_workbenches = database_helper.load_busy_workbenches()
+        return render_template("workbench_adm.html", busy_workbenches=busy_workbenches)

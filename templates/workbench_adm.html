@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} Gerenciar Bancadas {% endblock %}
+
+{% block content %}
+        <div class="col-md-4 col-md-offset-4">
+                <div class="responsive-table">
+                        <div class="table table-hover table-striped table-bordered">
+                                {% for wb in busy_workbenches %}
+                                        <tr>
+                                                <th><input type="ch eckbox" name="{{wb}}" value="{{wb}}"></th>
+                                                <td> {{wb}} </td>
+                                        </tr>
+                                {% endfor %}
+                        </div>
+                </div>
+        </div>
+{% endblock %}
+
+{% block bottom %}
+
+{% endblock %}

@@ -25,6 +25,7 @@
                                         {% if 'workbench_name' in session: %}
                                                 <span class="label label-danger">{{session['workbench_name']}}</span>
                                                 <span class="label label-info">{{session['workbench_ip']}}</span>
+                                                <span><button type="button" class="btn" onclick="leave_workbench()" name="button">Deixar Bancada</button></span>
                                         {% endif %}
                                         {% if 'workbench_name' not in session: %}
                                                 <span class="label label-danger">Sem Bancada</span>
@@ -39,6 +40,7 @@
                                                     <li role="presentation"><a href="{{url_for('add_defeito')}}">Adicionar Defeito</a></li>
                                                     <li role="presentation"><a href="{{url_for('connector')}}">Adicionar Conector</a></li>
                                                     <li role="presentation"><a href="{{url_for('b_crud')}}">CRUD Placas</a></li>
+                                                    <li role="presentation"><a href="{{url_for('workbench_adm')}}">Administrar Bancadas</a></li>
                                             {% endif %}
                                     {% endif %}
                                     <li role="presentation"><a href="{{url_for('work_bench')}}">Bancada</a></li>
@@ -58,6 +60,19 @@
                 </div>
 
                 <script src="{{url_for('static', filename = 'js/bootstrap.min.js')}}"></script>
+                <script type="text/javascript">
+                        let leave_workbench = function(){
+                                $.ajax({
+                                        url: "{{ url_for('leave_workbench') }}",
+                                        type: "POST",
+                                        data: '',
+                                        success: function(){
+                                                alert("Vc se desligou da Bancada que estava ligado");
+                                        }
+
+                                });
+                        }
+                </script>
                 {% block bottom %}
                 {% endblock %}
         </body>

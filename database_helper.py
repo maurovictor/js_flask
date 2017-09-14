@@ -308,6 +308,20 @@ def load_available_workbenches():
         print("##################")
         return ''
 
+def load_busy_workbenches():
+    conn = sqlite3.connect('db/banco_de_dados')
+    c = conn.cursor()
+    db_command = "SELECT bancada_nome FROM Bancada WHERE bancada_ocupada >= 1 ORDER BY bancada_id"
+    c.execute(db_command)
+    workbenches = c.fetchall()
+    conn.commit()
+    conn.close()
+    workbenches = [item[0] for item in workbenches]
+    print(workbenches)
+    print("db: benches loaded")
+    return workbenches
+
+
 def load_deffects(board_id):
     try:
         conn = sqlite3.connect('db/banco_de_dados')
@@ -398,6 +412,13 @@ def set_workbench_as_busy(workbench_name):
     conn = sqlite3.connect("db/banco_de_dados")
     c = conn.cursor()
     db_command = "UPDATE Bancada SET bancada_ocupada=1 WHERE bancada_nome=?"
+    c.execute(db_command, (workbench_name,))
+    conn.commit()
+    conn.close()
+def set_workbench_as_free(workbench_name):
+    conn = sqlite3.connect("db/banco_de_dados")
+    c = conn.cursor()
+    db_command = "UPDATE Bancada SET bancada_ocupada=0 WHERE bancada_nome=?"
     c.execute(db_command, (workbench_name,))
     conn.commit()
     conn.close()
