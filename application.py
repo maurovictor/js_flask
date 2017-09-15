@@ -316,3 +316,15 @@ def workbench_adm():
     if request.method == 'GET':
         busy_workbenches = database_helper.load_busy_workbenches()
         return render_template("workbench_adm.html", busy_workbenches=busy_workbenches)
+    else:
+        selected_busy_wb = str(request.get_data())
+        selected_busy_wb = selected_busy_wb[1:].split("&")
+        selected_busy_wb.pop()
+        selected_busy_wb = [busy_wb.split("=")[0] for busy_wb in selected_busy_wb]
+
+        selected_busy_wb[0] = ''.join(list(selected_busy_wb[0])[1:])
+        print(selected_busy_wb)
+        for i in selected_busy_wb:
+            database_helper.set_workbench_as_free(i)
+
+        return redirect('/workbench_adm')

@@ -317,7 +317,6 @@ def load_busy_workbenches():
     conn.commit()
     conn.close()
     workbenches = [item[0] for item in workbenches]
-    print(workbenches)
     print("db: benches loaded")
     return workbenches
 

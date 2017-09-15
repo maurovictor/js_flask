@@ -3,18 +3,25 @@
 {% block title %} Gerenciar Bancadas {% endblock %}
 
 {% block content %}
-        <div class="col-md-4 col-md-offset-4">
-                <div class="responsive-table">
-                        <div class="table table-hover table-striped table-bordered">
-                                {% for wb in busy_workbenches %}
-                                        <tr>
-                                                <th><input type="ch eckbox" name="{{wb}}" value="{{wb}}"></th>
-                                                <td> {{wb}} </td>
-                                        </tr>
-                                {% endfor %}
+         {% if 'user' in session %}
+                {% if session['role'] %}
+                        <div class="col-md-3 col-md-offset-4">
+                                <div class="responsive-table">
+                                        <div class="table table-striped table-bordered table-hover">
+                                                <form class="" action="{{url_for('workbench_adm')}}" method="post">
+                                                {% for wb in busy_workbenches %}
+                                                        <tr>
+                                                                <th><input type="checkbox" name="{{wb}}" value="{{wb}}"></th>
+                                                                <td><button type="button" class="btn" name="button">{{wb}}</button></td>
+                                                                <td></td>
+                                                        </tr>
+                                                {% endfor %}
+                                        </div>
+                                        <button type="submit" class="btn btn-success" name="button">Liberar Bancadas</button>
+                                </div>
                         </div>
-                </div>
-        </div>
+                {% endif %}
+        {% endif %}
 {% endblock %}
 
 {% block bottom %}
