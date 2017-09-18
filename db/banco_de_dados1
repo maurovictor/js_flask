@@ -1,0 +1,42 @@
+BEGIN TRANSACTION;
+CREATE TABLE `Usuario` (
+	`usuario_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`usuario_nome`	TEXT NOT NULL UNIQUE,
+	`usuario_senha`	TEXT NOT NULL,
+	`adm`	INTEGER NOT NULL
+);
+CREATE TABLE "Placas" (
+	`placa_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`nome_placa`	TEXT NOT NULL UNIQUE,
+	`fabricante`	TEXT NOT NULL,
+	`tipo`	TEXT NOT NULL,
+	`conector`	INTEGER NOT NULL,
+	FOREIGN KEY(`conector`) REFERENCES conector_id
+);
+CREATE TABLE "Defeitos" (
+	`defeito_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`nome_defeito`	TEXT NOT NULL,
+	`descricao`	TEXT,
+	`conserto`	TEXT NOT NULL,
+	`placa`	INTEGER NOT NULL,
+	FOREIGN KEY(`placa`) REFERENCES placa_id
+);
+CREATE TABLE "Conector" (
+	`conector_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`nome_conector`	TEXT NOT NULL UNIQUE,
+	`byte1`	INTEGER NOT NULL,
+	`byte2`	INTEGER NOT NULL,
+	`byte3`	INTEGER NOT NULL,
+	`byte4`	INTEGER NOT NULL,
+	`byte5`	INTEGER NOT NULL,
+	`byte6`	INTEGER NOT NULL,
+	`byte7`	INTEGER NOT NULL,
+	`byte8`	INTEGER NOT NULL
+);
+CREATE TABLE "Bancada" (
+	`bancada_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	`bancada_ip`	TEXT NOT NULL UNIQUE,
+	`bancada_nome`	INTEGER NOT NULL,
+	`bancada_ocupada`	INTEGER
+);
+COMMIT;
