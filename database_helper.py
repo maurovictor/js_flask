@@ -1,10 +1,12 @@
-import sqlite3
+import sqlite3, os
 from werkzeug.security import generate_password_hash, check_password_hash
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, 'db/banco_de_dados')
 def save_new_user(name, password):
     password = generate_password_hash(password)
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "INSERT INTO Usuario (usuario_nome, usuario_senha, adm) VALUES('{0}', '{1}', '{2}')"\
                             .format(name, password, 0)
@@ -21,7 +23,7 @@ def save_new_user(name, password):
         print("##################")
 
 def load_hashed_password(user):
-    conn = sqlite3.connect('db/banco_de_dados')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     db_command = "SELECT usuario_senha FROM Usuario WHERE usuario_nome=?"
     c.execute(db_command, (user,))
@@ -31,7 +33,7 @@ def load_hashed_password(user):
     return hashed_password
 def load_users_name():
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT usuario_nome FROM Usuario ORDER BY usuario_id"
         c.execute(db_command)
@@ -51,7 +53,7 @@ def load_users_name():
 
 def save_connector(name, commands):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "INSERT INTO Conector (nome_conector, byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')"\
                 .format(name, commands[0], commands[1], commands[2], commands[3], commands[4], commands[5], commands[6], commands[7])
@@ -68,7 +70,7 @@ def save_connector(name, commands):
 
 def load_role(user):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT adm FROM Usuario WHERE usuario_nome=?"
         c.execute(db_command,(user,))
@@ -83,7 +85,7 @@ def load_role(user):
 
 def save_board(name, fabric, board_type, connector):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "INSERT INTO Placas (nome_placa, fabricante, tipo, conector) VALUES('{0}', '{1}', '{2}', '{3}')"\
                 .format(name, fabric, board_type, connector)
@@ -100,7 +102,7 @@ def save_board(name, fabric, board_type, connector):
 
 def save_workbench(ip, name):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "INSERT INTO Bancada (bancada_ip, bancada_nome) VALUES ('{0}', '{1}')"\
                                     .format(ip, name)
@@ -119,7 +121,7 @@ def save_workbench(ip, name):
 
 def load_boards():
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command_1 = "SELECT nome_placa FROM Placas ORDER BY placa_id"
         db_command_2 = "SELECT fabricante FROM Placas ORDER BY placa_id"
@@ -146,7 +148,7 @@ def load_boards():
 
 def load_connectors():
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT nome_conector FROM Conector ORDER BY conector_id"
         c.execute(db_command)
@@ -167,7 +169,7 @@ def load_connectors():
 
 def pick_connector_id(connector_name):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT conector_id FROM Conector WHERE nome_conector=?"
         c.execute(db_command, (connector_name,))
@@ -184,7 +186,7 @@ def pick_connector_id(connector_name):
 
 def pick_board_id(board_name):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT placa_id FROM Placas WHERE nome_placa=?"
         c.execute(db_command, (board_name,))
@@ -203,7 +205,7 @@ def pick_board_id(board_name):
 
 def pick_workbench_ip(name):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT bancada_ip FROM Bancada WHERE bancada_nome=?"
         c.execute(db_command, (name,))
@@ -220,7 +222,7 @@ def pick_workbench_ip(name):
 
 def pick_board_name(board_id):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT nome_placa FROM Placas WHERE placa_id=?"
         c.execute(db_command, (board_id,))
@@ -237,7 +239,7 @@ def pick_board_name(board_id):
 
 def pick_board_id_from_deffect(deffect):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT placa_id FROM Placas WHERE nome_placa=?"
         c.execute(db_command, (deffect,))
@@ -254,7 +256,7 @@ def pick_board_id_from_deffect(deffect):
 
 def load_connector_from_board(board_id):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT conector FROM Placas where placa_id=?"
         c.execute(db_command, (board_id,))
@@ -273,7 +275,7 @@ def load_connector_from_board(board_id):
 
 def load_connector_command(connector_id):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 FROM Conector WHERE conector_id=?"
         c.execute(db_command, (connector_id,))
@@ -290,7 +292,7 @@ def load_connector_command(connector_id):
         return ''
 def load_available_workbenches():
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT bancada_nome FROM Bancada WHERE bancada_ocupada = 0 ORDER BY bancada_id"
         c.execute(db_command)
@@ -309,7 +311,7 @@ def load_available_workbenches():
         return ''
 
 def load_busy_workbenches():
-    conn = sqlite3.connect('db/banco_de_dados')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     db_command = "SELECT bancada_nome FROM Bancada WHERE bancada_ocupada >= 1 ORDER BY bancada_id"
     c.execute(db_command)
@@ -323,7 +325,7 @@ def load_busy_workbenches():
 
 def load_deffects(board_id):
     try:
-        conn = sqlite3.connect('db/banco_de_dados')
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
         db_command = "SELECT nome_defeito FROM Defeitos WHERE placa=?"
         c.execute(db_command, (board_id,))
@@ -341,7 +343,7 @@ def load_deffects(board_id):
         return ''
 
 def pick_deffect_docs(deffect_name):
-    conn = sqlite3.connect('db/banco_de_dados')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
     db_command_1 = "SELECT descricao FROM Defeitos WHERE nome_defeito=?"
@@ -357,7 +359,7 @@ def pick_deffect_docs(deffect_name):
     return [description, fixing]
 
 def load_board_rows():
-    conn = sqlite3.connect('db/banco_de_dados')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
     db_command_1 = "SELECT * FROM Placas"
