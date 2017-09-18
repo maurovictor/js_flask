@@ -384,7 +384,7 @@ def load_board_rows():
 
 def delete_board_rows(board_ids_list=()):
     try:
-        conn = sqlite3.connect("db/banco_de_dados")
+        conn = sqlite3.connect(db_path)
         c = conn.cursor()
     except Exception as e:
         print("-----")
@@ -410,7 +410,7 @@ def delete_board_rows(board_ids_list=()):
         print("-----")
 
 def set_workbench_as_busy(workbench_name):
-    conn = sqlite3.connect("db/banco_de_dados")
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     db_command = "UPDATE Bancada SET bancada_ocupada=1 WHERE bancada_nome=?"
     c.execute(db_command, (workbench_name,))
