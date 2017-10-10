@@ -1,5 +1,4 @@
 ## Mauro Victor Castro
-
 import urllib.request
 import urllib.parse
 import database_helper
@@ -91,6 +90,21 @@ def activate_phase_url(ip):
         print()
         print('----------')
         return False
+
+def activate_protec_url(ip):
+    try:
+        url='http://' + ip + '/activate_protec'
+        urllib.request.urlopen(url)
+        return True
+    except Exception as e:
+        print('----------')
+        print()
+        print('Problem with /activate_protec request')
+        print()
+        print('----------')
+        return False
+
+
 
 def get_picture_path(deffect, board_name, size):
     if size == 'large':

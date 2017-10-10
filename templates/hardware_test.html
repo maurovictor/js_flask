@@ -41,6 +41,16 @@
                                 }
                         });
                 }
+                var turn_protec = function(){
+                        $.ajax({
+                                url: "{{url_for('protec')}}",
+                                type: "GET",
+                                data: "",
+                                success: function(){
+                                        alert("Fase Ligada");
+                                }
+                        });
+                }
         </script>
 
 {% endblock %}
@@ -56,6 +66,7 @@
                 <div class="col-md-4 ">
                         <h1><span class="label label-primary" id="board-name">{{session['board_name']}}</span></h1>
                         <span><button type="button" class="btn btn-danger" name="button" onclick="turn_phase()">Switch Phase</button></span>
+                        <span><button type="button" class="btn btn-danger" name="button" onclick="turn_protec()">Switch Protection</button></span>
                 </div>
 
                 <div class="col-md-4">

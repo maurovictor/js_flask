@@ -273,6 +273,14 @@ def phase():
     return ''
 
 
+@app.route('/activate_protec')
+def protec():
+    helpers.activate_protec_url(session["workbench_ip"])
+    print(session["workbench_ip"])
+    return ''
+
+
+
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
     if request.method == 'GET':
@@ -310,7 +318,7 @@ def b_crud():
         board_ids = tuple(filter(None, list(request.form.values())))
         database_helper.delete_board_rows(board_ids)
         return redirect("boards_crud")
-        
+
 
 @app.route('/workbench_adm', methods=['POST','GET'])
 def workbench_adm():
