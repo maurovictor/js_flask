@@ -318,6 +318,9 @@ def b_crud():
         board_ids = tuple(filter(None, list(request.form.values())))
         database_helper.delete_board_rows(board_ids)
         return redirect("boards_crud")
+@app.route('/delete_board', methods=['POST'])
+def del_board():
+    return
 
 
 @app.route('/workbench_adm', methods=['POST','GET'])
