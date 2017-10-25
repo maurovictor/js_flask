@@ -313,7 +313,8 @@ def leave_workbench():
 def b_crud():
     if request.method == 'GET':
         boards = database_helper.load_board_rows()
-        return render_template("boards_crud.html", rows=boards)
+        conn_ids = database_helper.load_conn_ids_names()
+        return render_template("boards_crud.html", data=[boards, conn_ids])
     else:
         board_ids = tuple(filter(None, list(request.form.values())))
         database_helper.delete_board_rows(board_ids)

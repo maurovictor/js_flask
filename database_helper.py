@@ -361,7 +361,6 @@ def pick_deffect_docs(deffect_name):
 def load_board_rows():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-
     db_command_1 = "SELECT * FROM Placas"
     c.execute(db_command_1,)
     rows = c.fetchall()
@@ -381,6 +380,22 @@ def load_board_rows():
         rows[i][4] = b_conn_names[i]
 
     return rows
+
+def load_conn_ids_names():
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    db_command1 = "SELECT conector_id FROM Conector"
+    db_command2 = "SELECT nome_conector FROM Conector"
+    c.execute(db_command1)
+    conn_ids = c.fetchall()
+    c.execute(db_command2)
+    conn_names = c.fetchall()
+
+    conn.close()
+
+    conn_ids = [list(i) for i in conn_ids]
+    conn_names  = [list(i) for i in conn_names]
+    return [conn_ids, conn_names]
 
 def delete_board_rows(board_ids_list=()):
     try:
@@ -416,6 +431,7 @@ def set_workbench_as_busy(workbench_name):
     c.execute(db_command, (workbench_name,))
     conn.commit()
     conn.close()
+
 def set_workbench_as_free(workbench_name):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
