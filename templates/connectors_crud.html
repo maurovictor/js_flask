@@ -1,0 +1,193 @@
+{% extends 'base.html'%}
+
+{% block title %} Connectors CRUD {% endblock %}
+
+{% block header %}
+        <script type="text/javascript">
+            $('#myModal').on('shown.bs.modal', function () {
+                $('#myInput').focus()
+            })
+        </script>
+{% endblock %}
+
+{% block content %}
+        {% if session['role'] %}
+                <div class="col-md-4 col-md-offset-3">
+                        <div class="responsive-table">
+                                <table class="table table-striped table-bordered table-hover">
+                                        <form class="" action="{{url_for('c_crud')}}" method="post">
+                                                <tr>
+                                                        <th></th>
+                                                        <th> Conector </th>
+                                                </tr>
+                                                {% for i in range(connectors_data[0]|length) %}
+                                                <tr>
+                                                        <td><input type="checkbox" name="{{connectors_data[0][i]}}" value="{{connectors_data[0][i]}}"></td>
+                                                        <td>{{connectors_data[1][i]}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                <nav class="navbar navbar-fixed-bottom">
+                                                        <div class="container">
+                                                                <div class="col-md-2 col-md-offset-2">
+                                                                        <div class="collapse navbar-collapse">
+                                                                                <ul class="nav navbar-nav navbar-default">
+                                                                                        <li><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"><li><span class="glyphicon glyphicon-edit"></span></li></button></li>
+                                                                                        <li><button type="submit" class="btn" name="button"><li><span class="glyphicon glyphicon-trash"></span></li></button></li>
+                                                                                </ul>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </nav>
+                                        </form>
+                                </table>
+
+                        </div>
+                </div>
+        {% endif %}
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                    <form class="" action="{{url_for('edit_c')}}" method="post">
+                            <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title text-center">Editar Conector</h4>
+                            </div>
+                            <div class="modal-body">
+                                    <div class="row">
+                                            <div class="form-group">
+                                                    <label class="text-center" for="nome-conector">Nome do Conector</label>
+                                                    <select class="form-control" name="nome-conector" id="nome-conector">
+                                                            {% for i in range(connectors_data[0]|length) %}
+                                                                <option value="{{connectors_data[0][i]}}">{{connectors_data[1][i]}}</option>
+                                                            {% endfor %}
+                                                    </select>
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-md-1">
+                                                    <span>{{session['valores']}}</span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                    <canvas id="myCanvas" width="450" height="450"></canvas>
+                                            </div>
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" id="clean">Limpar</button>
+                                    <button type="button" class="btn btn-info" id="submit" data-dismiss="modal">Submeter</button>
+                            </div>
+
+                    </form>
+
+
+            </div>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottom %}
+
+<!-- Contact Matrix code -->
+<script type="text/javascript">
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        ctx.font="10px Arial";
+        ctx.fillStyle = "#d5dbdb";
+        ctx.fillRect(0,0,450,450);
+        ctx.strokeRect(0,0,450,450);
+        //draw vertical lines
+        for (i=1; i <= 8; i++)
+        {
+                ctx.moveTo(i*50,50);
+                ctx.lineTo(i*50, 400);
+                ctx.stroke();
+                ctx.strokeText(i, 35, i*50);
+        }
+        //draw horizontal lines
+        for (i=1; i<=8; i++)
+        {
+                ctx.moveTo(50, i*50);
+                ctx.lineTo(400, i*50);
+                ctx.stroke();
+                ctx.strokeText(String.fromCharCode('A'.charCodeAt() + (i-1)), i*50, 40); // incrementing letter
+        }
+        var coordenadas = []
+        ctx.canvas.addEventListener('click', function(event){
+                var rect = canvas.getBoundingClientRect();
+                var mouseX = event.clientX - rect.left;
+                var mouseY = event.clientY - rect.top;
+                var col = Math.round(mouseX/50);
+                var bit = Math.round(mouseY/50);
+                ctx.fillStyle = "#5A6A62";
+                if ((col >=1 & col <= 8) & (bit >=1 & bit <= 8))
+                ctx.fillRect((Math.round(mouseX/50)*50)-10,(Math.round(mouseY/50)*50)-10,20,20);
+                coordenadas.push(col);
+                coordenadas.push(bit);
+        });
+        var limpar = document.getElementById("clean");
+        limpar.addEventListener('click', function(event){
+                ctx.fillStyle = "#d5dbdb";
+                ctx.fillRect(0,0,450,450);
+                ctx.strokeRect(0,0,450,450);
+                for (i=1; i <= 8; i++)
+                {
+                        ctx.moveTo(i*50,50);
+                        ctx.lineTo(i*50, 400);
+                        ctx.stroke();
+                        ctx.strokeText(i, 35, i*50);
+                }
+                //draw horizontal lines
+                for (i=1; i<=8; i++)
+                {
+                        ctx.moveTo(50, i*50);
+                        ctx.lineTo(400, i*50);
+                        ctx.stroke();
+                        ctx.strokeText(String.fromCharCode('A'.charCodeAt() + (i-1)), i*50, 40); // incrementing letter
+                }
+                var coordenadas = []
+        });
+        var bot_enviar = document.getElementById("submit");
+        bot_enviar.addEventListener('click', function(event){
+                console.log(coordenadas);
+                //add connector recently created to select box on the fly
+                var connector_name = document.getElementById("nome-conector").value;
+                var opt = document.createElement("option");
+                opt.value = connector_name;
+                opt.innerHTML = connector_name;
+
+
+                //Send data to back end assycronously [coordinates and connector name]
+                $.ajax({
+                        type: "POST",
+                        url: "{{url_for('edit_c')}}",
+                        data:   {
+                                        c: JSON.stringify(coordenadas),
+                                        name: connector_name
+                                }
+                }).done(function(o) {
+                        ctx.fillStyle = "#d5dbdb";
+                        ctx.fillRect(0,0,450,450);
+                        ctx.strokeRect(0,0,450,450);
+                        for (i=1; i <= 8; i++)
+                        {
+                                ctx.moveTo(i*50,50);
+                                ctx.lineTo(i*50, 400);
+                                ctx.stroke();
+                                ctx.strokeText(i, 35, i*50);
+                        }
+                        //draw horizontal lines
+                        for (i=1; i<=8; i++)
+                        {
+                                ctx.moveTo(50, i*50);
+                                ctx.lineTo(400, i*50);
+                                ctx.stroke();
+                                ctx.strokeText(String.fromCharCode('A'.charCodeAt() + (i-1)), i*50, 40); // incrementing letter
+                        }
+                        var coordenadas = []
+                        coordenadas = [];
+                        console.log('saved');
+                        alert("Conector Salvo");
+                });
+        });
+</script>
+{% endblock %}

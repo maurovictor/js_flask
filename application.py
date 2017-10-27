@@ -265,21 +265,17 @@ def h_test():
 
         return jsonify([large_picture_path, small_picture_path, board_docs])
 
-
 @app.route('/activate_phase')
 def phase():
     helpers.activate_phase_url(session["workbench_ip"])
     print(session["workbench_ip"])
     return ''
 
-
 @app.route('/activate_protec')
 def protec():
     helpers.activate_protec_url(session["workbench_ip"])
     print(session["workbench_ip"])
     return ''
-
-
 
 @app.route('/workbench', methods=['GET','POST'])
 def work_bench():
@@ -318,11 +314,33 @@ def b_crud():
     else:
         board_ids = tuple(filter(None, list(request.form.values())))
         database_helper.delete_board_rows(board_ids)
-        return redirect("boards_crud")
+    return redirect("boards_crud")
+    
+@app.route('/connector_crud', methods=['POST', 'GET'])
+def c_crud():
+    if request.method == 'GET':
+        connectors     = database_helper.load_connectors()
+        connectors_ids = database_helper.load_connector_ids()
+        return render_template("connectors_crud.html", connectors_data=[connectors_ids, connectors])
+    else:
+        connector_ids = tuple(filter(None, list(request.form.values())))
+        database_helper.delete_connector_rows(connector_ids)
+        return redirect("connector_crud")
+
+@app.route('/edit_conn', methods=['POST'])
+def edit_c():
+    values=request.form['c']
+    connector_name = request.form['name']
+    print("Nome do conector " + connector_name)
+    coordinates = helpers.get_coordinates(values)
+    commands = helpers.generate_commands(coordinates)
+    #helpers.generate_url(commands)
+    database_helper.update_connector(connector_name, commands)
+    return ''
+
 @app.route('/delete_board', methods=['POST'])
 def del_board():
     return
-
 
 @app.route('/workbench_adm', methods=['POST','GET'])
 def workbench_adm():

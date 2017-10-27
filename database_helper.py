@@ -51,6 +51,23 @@ def load_users_name():
         print("##################")
 
 
+def update_connector(name, commands):
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        db_command = "UPDATE Conector SET byte1={}, byte2={}, byte3={}, byte4={}, byte5={}, byte6={}, byte7={}, byte8={} WHERE nome_conector={}"\
+                .format(commands[0], commands[1], commands[2], commands[3], commands[4], commands[5], commands[6], commands[7], name)
+        c.execute(db_command)
+        conn.commit()
+        conn.close()
+        print("db:: connector "+ name + " saved..")
+    except Exception as e:
+        print()
+        print("##################")
+        print("Erro na func. save_connector: ")
+        print(e)
+        print("##################")
+
 def save_connector(name, commands):
     try:
         conn = sqlite3.connect(db_path)
@@ -381,6 +398,16 @@ def load_board_rows():
 
     return rows
 
+def load_connector_ids():
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    db_command_1 = "SELECT conector_id FROM Conector"
+    c.execute(db_command_1,)
+    rows = c.fetchall()
+    conn.close()
+    rows = [x[0] for x in rows]
+    return rows
+
 def load_conn_ids_names():
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
@@ -397,7 +424,7 @@ def load_conn_ids_names():
     conn_names  = [list(i) for i in conn_names]
     return [conn_ids, conn_names]
 
-def delete_board_rows(board_ids_list=()):
+def delete_board_rows(connector_ids_list=()):
     try:
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
@@ -408,10 +435,37 @@ def delete_board_rows(board_ids_list=()):
         print("")
         print("-----")
     try:
-        if len(board_ids_list) == 1:
-            board_ids_list = "("+ board_ids_list[0] +")"
+        if len(connector_ids_list) == 1:
+            connector_ids_list = "("+ connector_ids_list[0] +")"
 
-        db_command = "DELETE FROM Placas WHERE placa_id IN{}".format(board_ids_list)
+        db_command = "DELETE FROM Conector WHERE conector_id IN{}".format(connector_ids_list)
+        print(db_command)
+        c.execute(db_command)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("-----")
+        print("")
+        print("Problems while trying to delete rows from Placas' table")
+        print(e)
+        print("")
+        print("-----")
+
+def delete_connector_rows(connector_ids_list=()):
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+    except Exception as e:
+        print("-----")
+        print("")
+        print("Problems while trying to connect to sqlite3 DB")
+        print("")
+        print("-----")
+    try:
+        if len(connector_ids_list) == 1:
+            connector_ids_list = "(" + connector_ids_list[0] + ")"
+
+        db_command = "DELETE FROM Conector WHERE conector_id IN{}".format(connector_ids_list)
         print(db_command)
         c.execute(db_command)
         conn.commit()
